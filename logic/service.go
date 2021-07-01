@@ -9,12 +9,12 @@ import (
 )
 
 type GameLogicService struct {
-	store             core.GameEventStorer
+	store             GameEventStorer
 	commandDispatcher *commandDispatcher
 	eventDispatcher   *eventDispatcher
 }
 
-func NewGameService(store core.GameEventStorer) core.Service {
+func NewGameService(store GameEventStorer) core.Service {
 	return &GameLogicService{
 		store:             store,
 		commandDispatcher: newCommandDispatcher(commandStateDisppatching),

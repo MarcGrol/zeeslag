@@ -2,13 +2,14 @@ package infra
 
 import (
 	"github.com/MarcGrol/zeeslag/core"
+	"github.com/MarcGrol/zeeslag/logic"
 )
 
 type basicEventStore struct {
 	events []core.GameEventPdu
 }
 
-func NewBasicEventStore() core.GameEventStorer {
+func NewBasicEventStore() logic.GameEventStorer {
 	return &basicEventStore{
 		events: []core.GameEventPdu{},
 	}
