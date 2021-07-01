@@ -7,12 +7,11 @@ type EventService interface {
 type EventType int
 
 const (
-	EventType_InvitedForGame EventType = iota
+	EventType_GridPopulated  EventType = iota
+	EventType_InvitedForGame
 	EventType_GameAccepted
 	EventType_GameRejected
-	EventType_GridPopulated
 	EventType_SalvoFired
-	EventType_SalvoReceived
 	EventType_SalvoImpactAssessed
 	EventType_GameQuited
 	EventType_GameCompleted
@@ -22,18 +21,35 @@ type GameEventPdu struct {
 	GameId    string
 	EventType EventType
 
+	Populated *GridPopulated
 	Invited   *InvitedForGame
 	Accepted  *GameAccepted
 	Rejected  *GameRejected
-	Populated *GridPopulated
 	Fired     *SalvoFired
 	Assessed  *SalvoImpactAssessed
 	Quited    *GameQuited
 	Completed *GameCompleted
 }
 
-func (p GameEventPdu)GetId() string {
-	return ""
+type GridPopulated struct {
+	GameId string
+	Winger []Coordinate
+	Angle  []Coordinate
+	AClass []Coordinate
+	BClass []Coordinate
+	SClass []Coordinate
+}
+
+func NewGridPopulatedFromPdu(pdu GameEventPdu) (*GridPopulated, bool) {
+	return pdu.Populated, pdu.EventType == EventType_GridPopulated
+}
+
+func (e GridPopulated) ToPdu() GameEventPdu {
+	return GameEventPdu{
+		GameId: e.GameId,
+		EventType: EventType_GridPopulated,
+		Populated: &e,
+	}
 }
 
 // events
@@ -85,27 +101,6 @@ func (e GameAccepted) ToPdu() GameEventPdu {
 		GameId: e.GameId,
 		EventType: EventType_GameAccepted,
 		Accepted:  &e,
-	}
-}
-
-type GridPopulated struct {
-	GameId string
-	Winger []Coordinate
-	Angle  []Coordinate
-	AClass []Coordinate
-	BClass []Coordinate
-	SClass []Coordinate
-}
-
-func NewGridPopulatedFromPdu(pdu GameEventPdu) (*GridPopulated, bool) {
-	return pdu.Populated, pdu.EventType == EventType_GridPopulated
-}
-
-func (e GridPopulated) ToPdu() GameEventPdu {
-	return GameEventPdu{
-		GameId: e.GameId,
-		EventType: EventType_GridPopulated,
-		Populated: &e,
 	}
 }
 

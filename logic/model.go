@@ -1,4 +1,4 @@
-package model
+package logic
 
 import (
 	"github.com/MarcGrol/zeeslag/core"
@@ -121,14 +121,14 @@ func (g *Game) ApplyAll(evts []core.GameEventPdu) {
 
 func (g *Game) Apply(event core.GameEventPdu) {
 	switch event.EventType {
+	case core.EventType_GridPopulated:
+		g.ApplyGridPopulated(*event.Populated)
 	case core.EventType_InvitedForGame:
 		g.ApplyInvitedForGame(*event.Invited)
 	case core.EventType_GameAccepted:
 		g.ApplyGameAccepted(*event.Accepted)
 	case core.EventType_GameRejected:
 		g.ApplyGameRejected(*event.Rejected)
-	case core.EventType_GridPopulated:
-		g.ApplyGridPopulated(*event.Populated)
 	case core.EventType_SalvoFired:
 		g.ApplySalvoFired(*event.Fired)
 	case core.EventType_SalvoImpactAssessed:
@@ -142,6 +142,10 @@ func (g *Game) Apply(event core.GameEventPdu) {
 	}
 }
 
+func (g *Game) ApplyGridPopulated(evt core.GridPopulated) {
+	g.GameId = evt.GameId
+}
+
 func (g *Game) ApplyInvitedForGame(evt core.InvitedForGame) {
 	g.GameId = evt.GameId
 	g.Initiator = evt.Initiator
@@ -150,10 +154,6 @@ func (g *Game) ApplyInvitedForGame(evt core.InvitedForGame) {
 }
 
 func (g *Game) ApplyGameAccepted(evt core.GameAccepted) {
-	g.GameId = evt.GameId
-}
-
-func (g *Game) ApplyGridPopulated(evt core.GridPopulated) {
 	g.GameId = evt.GameId
 }
 

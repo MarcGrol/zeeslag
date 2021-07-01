@@ -25,10 +25,6 @@ type GameCommandPdu struct {
 	Quit        *QuitGame
 }
 
-func (p GameCommandPdu)GetId() string {
-	return ""
-}
-
 type InviteForGame struct {
 	GameId string
 }

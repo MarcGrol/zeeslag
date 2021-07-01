@@ -5,7 +5,6 @@ import (
 	"log"
 
 	"github.com/MarcGrol/zeeslag/core"
-	"github.com/MarcGrol/zeeslag/model"
 )
 
 type GameLogicService struct {
@@ -22,44 +21,75 @@ func NewGameService(store GameEventStorer) core.Service {
 	}
 }
 
-func (s *GameLogicService) OnEvent(event core.GameEventPdu) error {
-	game, err := s.getGameOnId(event.GetId())
-	if err != nil {
-		log.Printf("Error fetching game for event %+v: %+v", event, err)
-		return err
-	}
-
-	dispatchFunc, found := s.eventDispatcher.resolveCommand(game.Status, event.EventType)
-	if !found {
-		return fmt.Errorf("Event %+v could not be resolved for state %+v", event.EventType, game.Status)
-	}
-
-	return dispatchFunc(s, *game, event)
-}
-
 func (s *GameLogicService) OnCommand(command core.GameCommandPdu) error {
-	game, err := s.getGameOnId(command.GetId())
+
+	game, err := s.getGameOnId(command.GameId)
 	if err != nil {
 		log.Printf("Error fetching game for command %+v: %+v", command, err)
 		return err
 	}
 
-	dispatchFunc, found := s.commandDispatcher.resolveEvent(game.Status, command.CommandType)
+	log.Printf("Got command %+v for game: %+v", command, game)
+
+	dispatchFunc, expectedNextStatus, found := s.commandDispatcher.resolveEvent(game.Status, command.CommandType)
 	if !found {
 		return fmt.Errorf("Command %+v could not be resolved for state %+v", command.CommandType, game.Status)
 	}
 
-	return dispatchFunc(s, *game, command)
+	events, err := dispatchFunc(s, *game, command)
+	if err != nil {
+		log.Printf("Error handling command %+v: %+v", command, err)
+		return err
+	}
+
+	game.ApplyAll(events)
+
+	if game.Status != expectedNextStatus {
+		log.Printf("Unexpected next state for command: %+v, expected status: %+v", game.Status, expectedNextStatus)
+		return err
+	}
+
+	return nil
+}
+
+func (s *GameLogicService) OnEvent(event core.GameEventPdu) error {
+	game, err := s.getGameOnId(event.GameId)
+	if err != nil {
+		log.Printf("Error fetching game for event %+v: %+v", event, err)
+		return err
+	}
+
+	log.Printf("Got event %+v for game: %+v", event, game)
+
+	dispatchFunc, expectedNextStatus, found := s.eventDispatcher.resolveCommand(game.Status, event.EventType)
+	if !found {
+		return fmt.Errorf("Event %+v could not be resolved for state %+v", event.EventType, game.Status)
+	}
+
+	events, err := dispatchFunc(s, *game, event)
+	if err != nil {
+		log.Printf("Error handling event %+v: %+v", event, err)
+		return err
+	}
+
+	game.ApplyAll(events)
+
+	if game.Status != expectedNextStatus {
+		log.Printf("Unexpected next state for event: %+v, expected status: %+v", game, expectedNextStatus)
+		return err
+	}
+
+	return nil
 }
 
 // TODO Convert into a repository
-func (s *GameLogicService) getGameOnId(gameId string) (*model.Game, error) {
+func (s *GameLogicService) getGameOnId(gameId string) (*Game, error) {
 	events, err := s.store.GetEventsOnGame(gameId)
 	if err != nil {
 		return nil, err
 	}
 
-	game := model.NewGame(events)
+	game := NewGame(events)
 
 	return game, nil
 }

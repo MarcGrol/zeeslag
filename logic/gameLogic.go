@@ -1,242 +1,215 @@
 package logic
 
 import (
-	"log"
-
 	"github.com/MarcGrol/zeeslag/core"
-	"github.com/MarcGrol/zeeslag/model"
 )
 
 var commandStateDisppatching = []commandGameState{
 	{
-		gameState:   model.Idle,
+		gameState:   Idle,
 		commandType: core.CommandType_InviteForGame,
-		callback: inviteForGame,
-		nextState: model.InvitationPending,
+		callback:    inviteForGame,
+		nextState:   InvitationPending,
 	},
 	{
-		gameState:   model.InvitationPending,
+		gameState:   InvitationPending,
 		commandType: core.CommandType_Quit,
-		callback: quitGame,
-		nextState: model.Quited,
+		callback:    quitGame,
+		nextState:   Quited,
 	},
 	{
-		gameState:   model.InvitationPending,
+		gameState:   InvitationPending,
 		commandType: core.CommandType_Accept,
-		callback: acceptGame,
-		nextState: model.Active,
+		callback:    acceptGame,
+		nextState:   Active,
 	},
 	{
-		gameState:   model.InvitationPending,
+		gameState:   InvitationPending,
 		commandType: core.CommandType_Reject,
-		callback: rejectGame,
-		nextState: model.Rejected,
+		callback:    rejectGame,
+		nextState:   Rejected,
 	},
 	{
-		gameState:   model.Active,
+		gameState:   Active,
 		commandType: core.CommandType_Quit,
-		callback: quitGame,
-		nextState: model.Quited,
+		callback:    quitGame,
+		nextState:   Quited,
 	},
 	{
-		gameState:   model.Active,
+		gameState:   Active,
 		commandType: core.CommandType_Fire,
-		callback: fireSalvo,
-		nextState: model.Active,
+		callback:    fireSalvo,
+		nextState:   Active,
 	},
 }
 
 var eventStateDispatching = []eventGameState{
 	{
-		gameState: model.Idle,
+		gameState: Idle,
 		eventType: core.EventType_InvitedForGame,
-		callback: onInvitedForGame,
-		nextState: model.InvitationPending,
+		callback:  onInvitedForGame,
+		nextState: InvitationPending,
 	},
 	{
-		gameState: model.InvitationPending,
+		gameState: InvitationPending,
 		eventType: core.EventType_GameAccepted,
-		callback: onInvitationAccepted,
-		nextState: model.Active,
+		callback:  onInvitationAccepted,
+		nextState: Active,
 	},
 	{
-		gameState: model.InvitationPending,
+		gameState: InvitationPending,
 		eventType: core.EventType_GameRejected,
-		callback: onInvitationRejected,
-		nextState: model.Rejected,
+		callback:  onInvitationRejected,
+		nextState: Rejected,
 	},
 	{
-		gameState: model.Active,
+		gameState: Active,
 		eventType: core.EventType_GameQuited,
-		callback: onGameQuited,
-		nextState: model.Quited,
+		callback:  onGameQuited,
+		nextState: Quited,
 	},
 	{
-		gameState: model.Active,
+		gameState: Active,
 		eventType: core.EventType_SalvoFired,
-		callback: onSalvoFired,
-		nextState: model.Active,
+		callback:  onSalvoFired,
+		nextState: Active,
 	},
 	{
-		gameState: model.Active,
+		gameState: Active,
 		eventType: core.EventType_SalvoImpactAssessed,
-		callback: onSalvoImpactAssessed,
-		nextState: model.Active,
+		callback:  onSalvoImpactAssessed,
+		nextState: Active,
 	},
 	{
-		gameState: model.Active,
+		gameState: Active,
 		eventType: core.EventType_GameCompleted,
-		callback: onGameCompleted,
-		nextState: model.Completed,
+		callback:  onGameCompleted,
+		nextState: Completed,
 	},
 }
 
-func inviteForGame(s *GameLogicService, game model.Game, pdu core.GameCommandPdu) error {
-	return s.inviteForGame(game, *pdu.Invite)
+func inviteForGame(s *GameLogicService, game Game, pdu core.GameCommandPdu) ([]core.GameEventPdu, error) {
+	return func(cmd core.InviteForGame) ([]core.GameEventPdu, error) {
+		events := []core.GameEventPdu{}
+
+		// Validate: fields
+
+		// Validate: allowed for current state
+
+		// Compose and store events
+
+		return events, nil
+	}(*pdu.Invite)
 }
 
-func (s *GameLogicService) inviteForGame(game model.Game, cmd core.InviteForGame) error {
-	log.Printf("game: %+v, cmd: %+v", game, cmd)
+func acceptGame(s *GameLogicService, game Game, pdu core.GameCommandPdu) ([]core.GameEventPdu, error) {
+	return func(cmd core.AcceptGame) ([]core.GameEventPdu, error) {
+		events := []core.GameEventPdu{}
 
-	// Validate: fields
+		// Validate: fields
 
-	// Validate: allowed for current state
+		// Validate: allowed for current state
 
-	// Compose and store events
+		// Compose and store events
 
-	return nil
+		return events, nil
+	}(*pdu.Accept)
 }
 
-func acceptGame(s *GameLogicService, game model.Game, cmd core.GameCommandPdu) error {
-	return s.acceptGame(game, *cmd.Accept)
+func rejectGame(s *GameLogicService, game Game, pdu core.GameCommandPdu) ([]core.GameEventPdu, error) {
+	return func(cmd core.RejectGame) ([]core.GameEventPdu, error) {
+		events := []core.GameEventPdu{}
+
+		// Validate: fields
+
+		// Validate: allowed for current state
+
+		// Compose and store events
+
+		return events, nil
+	}(*pdu.Reject)
 }
 
-func (s *GameLogicService) acceptGame(game model.Game, cmd core.AcceptGame) error {
-	log.Printf("game: %+v, cmd: %+v", game, cmd)
+func fireSalvo(s *GameLogicService, game Game, pdu core.GameCommandPdu) ([]core.GameEventPdu, error) {
+	return func(cmd core.Salvo) ([]core.GameEventPdu, error) {
+		events := []core.GameEventPdu{}
 
-	// Validate: fields
+		// Validate: fields
 
-	// Validate: allowed for current state
+		// Validate: allowed for current state
 
-	// Compose and store events
+		// Compose and store events
 
-	return nil
+		return events, nil
+	}(*pdu.Fire)
 }
 
-func rejectGame(s *GameLogicService, game model.Game, pdu core.GameCommandPdu) error {
-	return s.rejectGame(game, *pdu.Reject)
+func quitGame(s *GameLogicService, game Game, pdu core.GameCommandPdu) ([]core.GameEventPdu, error) {
+	return func(cmd core.QuitGame) ([]core.GameEventPdu, error) {
+		events := []core.GameEventPdu{}
+
+		// Validate: fields
+
+		// Validate: allowed for current state
+
+		// Compose and store events
+
+		return events, nil
+	}(*pdu.Quit)
 }
 
-func (s *GameLogicService) rejectGame(game model.Game, cmd core.RejectGame) error {
-	log.Printf("game: %+v, cmd: %+v", game, cmd)
+func onInvitedForGame(s *GameLogicService, game Game, pdu core.GameEventPdu) ([]core.GameEventPdu, error) {
+	return func(evt core.InvitedForGame) ([]core.GameEventPdu, error) {
+		events := []core.GameEventPdu{}
 
-	// Validate: fields
-
-	// Validate: allowed for current state
-
-	// Compose and store events
-
-	return nil
+		return events, nil
+	}(*pdu.Invited)
 }
 
-func fireSalvo(s *GameLogicService, game model.Game, pdu core.GameCommandPdu) error {
-	return s.fireSalvo(game, *pdu.Fire)
+func onInvitationAccepted(s *GameLogicService, game Game, pdu core.GameEventPdu) ([]core.GameEventPdu, error) {
+	return func(evt core.GameAccepted) ([]core.GameEventPdu, error) {
+		events := []core.GameEventPdu{}
+
+		return events, nil
+	}(*pdu.Accepted)
 }
 
-func (s *GameLogicService) fireSalvo(game model.Game, cmd core.Salvo) error {
-	log.Printf("game: %+v, cmd: %+v", game, cmd)
+func onInvitationRejected(s *GameLogicService, game Game, pdu core.GameEventPdu) ([]core.GameEventPdu, error) {
+	return func(evt core.GameRejected) ([]core.GameEventPdu, error) {
+		events := []core.GameEventPdu{}
 
-	// Validate: fields
-
-	// Validate: allowed for current state
-
-	// Compose and store events
-
-	return nil
+		return events, nil
+	}(*pdu.Rejected)
 }
 
-func quitGame(s *GameLogicService, game model.Game, pdu core.GameCommandPdu) error {
-	return s.quitGame(game, *pdu.Quit)
+func onGameQuited(s *GameLogicService, game Game, pdu core.GameEventPdu) ([]core.GameEventPdu, error) {
+	return func(evt core.GameQuited) ([]core.GameEventPdu, error) {
+		events := []core.GameEventPdu{}
+
+		return events, nil
+	}(*pdu.Quited)
 }
 
-func (s *GameLogicService) quitGame(game model.Game, cmd core.QuitGame) error {
-	log.Printf("game: %+v, cmd: %+v", game, cmd)
+func onSalvoFired(s *GameLogicService, game Game, pdu core.GameEventPdu) ([]core.GameEventPdu, error) {
+	return func(evt core.SalvoFired) ([]core.GameEventPdu, error) {
+		events := []core.GameEventPdu{}
 
-	// Validate: fields
-
-	// Validate: allowed for current state
-
-	// Compose and store events
-
-	return nil
+		return events, nil
+	}(*pdu.Fired)
 }
 
-func onInvitedForGame(s *GameLogicService, game model.Game, pdu core.GameEventPdu) error {
-	return s.onInvitedForGame(game, *pdu.Invited)
+func onSalvoImpactAssessed(s *GameLogicService, game Game, pdu core.GameEventPdu) ([]core.GameEventPdu, error) {
+	return func(evt core.SalvoImpactAssessed) ([]core.GameEventPdu, error) {
+		events := []core.GameEventPdu{}
+
+		return events, nil
+	}(*pdu.Assessed)
 }
 
-func (s *GameLogicService) onInvitedForGame(game model.Game, evt core.InvitedForGame) error {
-	log.Printf("game: %+v, evt: %+v", game, evt)
+func onGameCompleted(s *GameLogicService, game Game, pdu core.GameEventPdu) ([]core.GameEventPdu, error) {
+	return func(evt core.GameCompleted) ([]core.GameEventPdu, error) {
+		events := []core.GameEventPdu{}
 
-	return nil
-}
-
-func onInvitationAccepted(s *GameLogicService, game model.Game, pdu core.GameEventPdu) error {
-	return s.onInvitationAccepted(game, *pdu.Accepted)
-}
-
-func (s *GameLogicService) onInvitationAccepted(game model.Game, evt core.GameAccepted) error {
-	log.Printf("game: %+v, evt: %+v", game, evt)
-
-	return nil
-}
-
-func onInvitationRejected(s *GameLogicService, game model.Game, pdu core.GameEventPdu) error {
-	return s.onInvitationRejected(game, *pdu.Rejected)
-}
-
-func (s *GameLogicService) onInvitationRejected(game model.Game, evt core.GameRejected) error {
-	log.Printf("game: %+v, evt: %+v", game, evt)
-
-	return nil
-}
-
-func onGameQuited(s *GameLogicService, game model.Game, pdu core.GameEventPdu) error {
-	return s.onGameQuited(game, *pdu.Quited)
-}
-
-func (s *GameLogicService) onGameQuited(game model.Game, evt core.GameQuited) error {
-	log.Printf("game: %+v, evt: %+v", game, evt)
-
-	return nil
-}
-
-func onSalvoFired(s *GameLogicService, game model.Game, pdu core.GameEventPdu) error {
-	return s.onSalvoFired(game, *pdu.Fired)
-}
-
-func (s *GameLogicService) onSalvoFired(game model.Game, evt core.SalvoFired) error {
-	log.Printf("game: %+v, evt: %+v", game, evt)
-
-	return nil
-}
-
-func onSalvoImpactAssessed(s *GameLogicService, game model.Game, pdu core.GameEventPdu) error {
-	return s.onSalvoImpactAssessed(game, *pdu.Assessed)
-}
-
-func (s *GameLogicService) onSalvoImpactAssessed(game model.Game, evt core.SalvoImpactAssessed) error {
-	log.Printf("game: %+v, evt: %+v", game, evt)
-
-	return nil
-}
-
-func onGameCompleted(s *GameLogicService, game model.Game, pdu core.GameEventPdu) error {
-	return s.onGameCompleted(game, *pdu.Completed)
-}
-
-func (s *GameLogicService) onGameCompleted(game model.Game, evt core.GameCompleted) error {
-	log.Printf("game: %+v, evt: %+v", game, evt)
-
-	return nil
+		return events, nil
+	}(*pdu.Completed)
 }

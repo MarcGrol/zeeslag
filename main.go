@@ -21,10 +21,12 @@ func main() {
 	channelsToSelf := infra.NewChannelsToSelf()
 	channelsToOther := infra.NewChannelsToOther()
 
-	// Start service in background
-	coreLogic := logic.NewGameService(infra.NewBasicEventStore())
-	playerService := infra.NewPlayerService(playerName, channelsToSelf, channelsToOther, coreLogic)
-	go playerService.Listen()
+	{
+		// Start own service in background
+		coreLogic := logic.NewGameService(infra.NewBasicEventStore())
+		playerService := infra.NewPlayerService(playerName, channelsToSelf, channelsToOther, coreLogic)
+		go playerService.Listen()
+	}
 
 	// Start service in foreground
 	ui.NewUserInterface(channelsToSelf)
