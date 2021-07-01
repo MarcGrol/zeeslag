@@ -7,12 +7,30 @@ type CommandService interface {
 type CommandType int
 
 const (
-	CommandType_InviteForGame CommandType = iota
+	CommandType_Unknown CommandType = iota
+	CommandType_InviteForGame
 	CommandType_Accept
 	CommandType_Reject
 	CommandType_Fire
 	CommandType_Quit
 )
+
+func (ct CommandType)String() string{
+	switch ct {
+	case CommandType_InviteForGame:
+		return "invite"
+	case CommandType_Accept:
+		return "accept"
+	case CommandType_Reject:
+		return "reject"
+	case CommandType_Fire:
+		return "fire"
+	case CommandType_Quit:
+		return "quit"
+	default:
+		return "unknown"
+	}
+}
 
 type GameCommandPdu struct {
 	GameId      string

@@ -7,7 +7,8 @@ type EventService interface {
 type EventType int
 
 const (
-	EventType_GridPopulated  EventType = iota
+	EventType_Unknown = iota
+	EventType_GridPopulated
 	EventType_InvitedForGame
 	EventType_GameAccepted
 	EventType_GameRejected
@@ -16,6 +17,29 @@ const (
 	EventType_GameQuited
 	EventType_GameCompleted
 )
+
+
+func (et EventType)String() string{
+	switch et {
+	case EventType_GridPopulated:
+		return "populated"
+	case EventType_InvitedForGame:
+		return "invited"
+	case EventType_GameAccepted:
+		return "accepted"
+	case EventType_GameRejected:
+		return "rejected"
+	case EventType_SalvoImpactAssessed:
+		return "assessed"
+	case EventType_SalvoFired:
+		return "fired"
+	case EventType_GameCompleted:
+		return "completed"
+	default:
+		return "unknown"
+	}
+}
+
 
 type GameEventPdu struct {
 	GameId    string

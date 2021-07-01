@@ -46,6 +46,12 @@ var commandStateDisppatching = []commandGameState{
 var eventStateDispatching = []eventGameState{
 	{
 		gameState: Idle,
+		eventType: core.EventType_GridPopulated,
+		callback:  onGridPopulated	,
+		nextState: Created,
+	},
+	{
+		gameState: Created,
 		eventType: core.EventType_InvitedForGame,
 		callback:  onInvitedForGame,
 		nextState: InvitationPending,
@@ -88,6 +94,15 @@ var eventStateDispatching = []eventGameState{
 	},
 }
 
+
+func onGridPopulated(s *GameLogicService, game Game, pdu core.GameEventPdu) ([]core.GameEventPdu, error) {
+	return func(evt core.GridPopulated) ([]core.GameEventPdu, error) {
+		events := []core.GameEventPdu{pdu}
+
+		return events, nil
+	}(*pdu.Populated)
+}
+
 func inviteForGame(s *GameLogicService, game Game, pdu core.GameCommandPdu) ([]core.GameEventPdu, error) {
 	return func(cmd core.InviteForGame) ([]core.GameEventPdu, error) {
 		events := []core.GameEventPdu{}
@@ -96,7 +111,7 @@ func inviteForGame(s *GameLogicService, game Game, pdu core.GameCommandPdu) ([]c
 
 		// Validate: allowed for current state
 
-		// Compose and store events
+		// Compose and repo events
 
 		return events, nil
 	}(*pdu.Invite)
@@ -110,7 +125,7 @@ func acceptGame(s *GameLogicService, game Game, pdu core.GameCommandPdu) ([]core
 
 		// Validate: allowed for current state
 
-		// Compose and store events
+		// Compose and repo events
 
 		return events, nil
 	}(*pdu.Accept)
@@ -124,7 +139,7 @@ func rejectGame(s *GameLogicService, game Game, pdu core.GameCommandPdu) ([]core
 
 		// Validate: allowed for current state
 
-		// Compose and store events
+		// Compose and repo events
 
 		return events, nil
 	}(*pdu.Reject)
@@ -138,7 +153,7 @@ func fireSalvo(s *GameLogicService, game Game, pdu core.GameCommandPdu) ([]core.
 
 		// Validate: allowed for current state
 
-		// Compose and store events
+		// Compose and repo events
 
 		return events, nil
 	}(*pdu.Fire)
@@ -152,7 +167,7 @@ func quitGame(s *GameLogicService, game Game, pdu core.GameCommandPdu) ([]core.G
 
 		// Validate: allowed for current state
 
-		// Compose and store events
+		// Compose and repo events
 
 		return events, nil
 	}(*pdu.Quit)

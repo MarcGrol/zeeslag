@@ -23,7 +23,7 @@ func main() {
 
 	{
 		// Start own service in background
-		coreLogic := logic.NewGameService(infra.NewBasicEventStore())
+		coreLogic := logic.NewGameLogicService(logic.NewGameRepository(infra.NewBasicEventStore()))
 		playerService := infra.NewPlayerService(playerName, channelsToSelf, channelsToOther, coreLogic)
 		go playerService.Listen()
 	}
