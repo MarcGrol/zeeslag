@@ -1,11 +1,9 @@
 package model
 
 import (
+	"github.com/MarcGrol/zeeslag/core"
 	"log"
-
-	"github.com/MarcGrol/zeeslag/evt"
 )
-
 
 // Aggregate
 type Game struct {
@@ -20,42 +18,42 @@ type Game struct {
 	HisBoard       Board
 }
 
-func NewGame(events []	evt.GameEventPdu) *Game {
+func NewGame(events []core.GameEventPdu) *Game {
 	game := &Game{}
 	game.ApplyAll(events)
 	return game
 }
 
 type Salvo struct {
-	Target      evt.Coordinate
-	SalvoStatus evt.SalvoStatus
+	Target      core.Coordinate
+	SalvoStatus core.SalvoStatus
 }
 
 type Board struct {
 	grid [16][16]CellSalvoStatus
 }
 
-func (b *Board) markCellStatus(target evt.Coordinate, cellStatus CellStatus) {
+func (b *Board) markCellStatus(target core.Coordinate, cellStatus CellStatus) {
 	// TODO check index ranges
 	b.grid[target.Row][target.Column].CellStatus = cellStatus
 }
 
-func (b *Board) markSalvoStatus(target evt.Coordinate, salvoStatus evt.SalvoStatus) {
+func (b *Board) markSalvoStatus(target core.Coordinate, salvoStatus core.SalvoStatus) {
 	// TODO check index ranges
 	b.grid[target.Row][target.Column].SalvoStatus = salvoStatus
 }
 
 type CellSalvoStatus struct {
 	CellStatus  CellStatus
-	SalvoStatus evt.SalvoStatus
+	SalvoStatus core.SalvoStatus
 }
 
 func (s CellSalvoStatus) Striing() string {
-	if s.SalvoStatus == evt.Hit {
+	if s.SalvoStatus == core.Hit {
 		return "x"
 	}
 
-	if s.SalvoStatus == evt.Miss {
+	if s.SalvoStatus == core.Miss {
 		return "-"
 	}
 
@@ -107,81 +105,78 @@ type SClass struct{}
 type GameStatus int
 
 const (
-	Initial GameStatus = iota
-	Requested
+	Idle GameStatus = iota
+	InvitationPending
 	Rejected
-	Accepted
-	WaitforOpponent
-	Aborted
-	Done
+	Active
+	Quited
+	Completed
 )
 
-func (g *Game) ApplyAll(evts []evt.GameEventPdu) {
+func (g *Game) ApplyAll(evts []core.GameEventPdu) {
 	for _, e := range evts {
 		g.Apply(e)
 	}
 }
 
-func (g *Game) Apply(event evt.GameEventPdu) {
+func (g *Game) Apply(event core.GameEventPdu) {
 	switch event.EventType {
-	case evt.EventType_GameInitiated	:
-		g.ApplyGameInitiated(*event.Initiated)
-	case evt.EventType_GameAccepted:
+	case core.EventType_InvitedForGame:
+		g.ApplyInvitedForGame(*event.Invited)
+	case core.EventType_GameAccepted:
 		g.ApplyGameAccepted(*event.Accepted)
-	case evt.EventType_GridPopulated:
-		g.ApplyGridPopulated(*event.Populated)
-	case evt.EventType_GameRejected:
+	case core.EventType_GameRejected:
 		g.ApplyGameRejected(*event.Rejected)
-	case evt.EventType_SalvoFired:
+	case core.EventType_GridPopulated:
+		g.ApplyGridPopulated(*event.Populated)
+	case core.EventType_SalvoFired:
 		g.ApplySalvoFired(*event.Fired)
-	case evt.EventType_SalvoReceived:
-		g.ApplySalvoReceived(*event.Received)
-	case evt.EventType_SalvoImpactProcessed:
-		g.ApplySalvoImpactProcessed(*event.Processed)
-	case evt.EventType_GameAborted:
-		g.ApplyGameAborted(*event.Aborted)
-	case evt.EventType_GameCompleted:
+	case core.EventType_SalvoImpactAssessed:
+		g.ApplySalvoImpactAssessed(*event.Assessed)
+	case core.EventType_GameQuited:
+		g.ApplyGameAborted(*event.Quited)
+	case core.EventType_GameCompleted:
 		g.ApplyGameCompleted(*event.Completed)
 	default:
 		log.Fatalf("Unrecogized event: %+v", event.EventType)
 	}
 }
 
-func (g *Game) ApplyGameInitiated(evt evt.GameInitiated) {
+func (g *Game) ApplyInvitedForGame(evt core.InvitedForGame) {
 	g.GameId = evt.GameId
 	g.Initiator = evt.Initiator
 	g.Invitee = evt.Invitee
-	g.Status = Requested
+	g.Status = InvitationPending
 }
 
-func (g *Game) ApplyGameAccepted(evt evt.GameAccepted) {
+func (g *Game) ApplyGameAccepted(evt core.GameAccepted) {
 	g.GameId = evt.GameId
 }
 
-func (g *Game) ApplyGridPopulated(evt evt.GridPopulated) {
+func (g *Game) ApplyGridPopulated(evt core.GridPopulated) {
 	g.GameId = evt.GameId
 }
 
-func (g *Game) ApplyGameRejected(evt evt.GameRejected) {
+func (g *Game) ApplyGameRejected(evt core.GameRejected) {
 	g.GameId = evt.GameId
 }
 
-func (g *Game) ApplySalvoFired(evt evt.SalvoFired) {
+func (g *Game) ApplySalvoFired(evt core.SalvoFired) {
 	g.GameId = evt.GameId
 }
 
-func (g *Game) ApplySalvoReceived(evt evt.SalvoReceived) {
+func (g *Game) ApplySalvoReceived(evt core.SalvoReceived) {
 	g.GameId = evt.GameId
 }
 
-func (g *Game) ApplySalvoImpactProcessed(evt evt.SalvoImpactProcessed) {
+func (g *Game) ApplySalvoImpactAssessed(evt core.SalvoImpactAssessed) {
 	g.GameId = evt.GameId
 }
 
-func (g *Game) ApplyGameAborted(evt evt.GameAborted) {
+func (g *Game) ApplyGameAborted(evt core.GameQuited) {
 	g.GameId = evt.GameId
 }
 
-func (g *Game) ApplyGameCompleted(evt evt.GameCompleted) {
+func (g *Game) ApplyGameCompleted(evt core.GameCompleted) {
 	g.GameId = evt.GameId
 }

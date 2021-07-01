@@ -1,47 +1,57 @@
-package evt
+package core
+
+type EventService interface {
+	OnEvent(cmd GameEventPdu) error
+}
 
 type EventType int
 
 const (
-	EventType_GameInitiated EventType = iota
+	EventType_InvitedForGame EventType = iota
 	EventType_GameAccepted
 	EventType_GameRejected
 	EventType_GridPopulated
 	EventType_SalvoFired
 	EventType_SalvoReceived
-	EventType_SalvoImpactProcessed
-	EventType_GameAborted
+	EventType_SalvoImpactAssessed
+	EventType_GameQuited
 	EventType_GameCompleted
 )
 
 type GameEventPdu struct {
+	GameId    string
 	EventType EventType
-	Initiated *GameInitiated
+
+	Invited   *InvitedForGame
 	Accepted  *GameAccepted
 	Rejected  *GameRejected
 	Populated *GridPopulated
 	Fired     *SalvoFired
-	Received  *SalvoReceived
-	Processed *SalvoImpactProcessed
-	Aborted   *GameAborted
+	Assessed  *SalvoImpactAssessed
+	Quited    *GameQuited
 	Completed *GameCompleted
 }
 
+func (p GameEventPdu)GetId() string {
+	return ""
+}
+
 // events
-type GameInitiated struct {
+type InvitedForGame struct {
 	GameId    string
 	Initiator string
 	Invitee   string
 }
 
-func NewGameInitiatedFromPdu(pdu GameEventPdu) (*GameInitiated, bool) {
-	return pdu.Initiated, pdu.EventType == EventType_GameInitiated
+func NewInvitedForGameFromPdu(pdu GameEventPdu) (*InvitedForGame, bool) {
+	return pdu.Invited, pdu.EventType == EventType_InvitedForGame
 }
 
-func (e GameInitiated) ToPdu() GameEventPdu {
+func (e InvitedForGame) ToPdu() GameEventPdu {
 	return GameEventPdu{
-		EventType: EventType_GameInitiated,
-		Initiated: &e,
+		GameId:    e.GameId,
+		EventType: EventType_InvitedForGame,
+		Invited:   &e,
 	}
 }
 
@@ -55,6 +65,7 @@ func NewGameRejectedFromPdu(pdu GameEventPdu) (*GameRejected, bool) {
 
 func (e GameRejected) ToPdu() GameEventPdu {
 	return GameEventPdu{
+		GameId: e.GameId,
 		EventType: EventType_GameRejected,
 		Rejected:  &e,
 	}
@@ -71,6 +82,7 @@ func NewGameAcceptedFromPdu(pdu GameEventPdu) (*GameAccepted, bool) {
 
 func (e GameAccepted) ToPdu() GameEventPdu {
 	return GameEventPdu{
+		GameId: e.GameId,
 		EventType: EventType_GameAccepted,
 		Accepted:  &e,
 	}
@@ -91,6 +103,7 @@ func NewGridPopulatedFromPdu(pdu GameEventPdu) (*GridPopulated, bool) {
 
 func (e GridPopulated) ToPdu() GameEventPdu {
 	return GameEventPdu{
+		GameId: e.GameId,
 		EventType: EventType_GridPopulated,
 		Populated: &e,
 	}
@@ -108,6 +121,7 @@ func NewSalvoFiredFromPdu(pdu GameEventPdu) (*SalvoFired, bool) {
 
 func (e SalvoFired) ToPdu() GameEventPdu {
 	return GameEventPdu{
+		GameId: e.GameId,
 		EventType: EventType_SalvoFired,
 		Fired:     &e,
 	}
@@ -119,23 +133,12 @@ type SalvoReceived struct {
 	Targets []Coordinate
 }
 
-func NewSalvoReceivedFromPdu(pdu GameEventPdu) (*SalvoReceived, bool) {
-	return pdu.Received, pdu.EventType == EventType_SalvoReceived
-}
-
-func (e SalvoReceived) ToPdu() GameEventPdu {
-	return GameEventPdu{
-		EventType: EventType_SalvoReceived,
-		Received:  &e,
-	}
-}
-
 type Coordinate struct {
 	Row    int
 	Column int
 }
 
-type SalvoImpactProcessed struct {
+type SalvoImpactAssessed struct {
 	GameId         string
 	FiredBy        string
 	TargetStatuses []TargetStatus
@@ -154,30 +157,32 @@ const (
 	Kill
 )
 
-func NewImpactProcessedFromPdu(pdu GameEventPdu) (*SalvoImpactProcessed, bool) {
-	return pdu.Processed, pdu.EventType == EventType_SalvoImpactProcessed
+func NewImpactAssessedFromPdu(pdu GameEventPdu) (*SalvoImpactAssessed, bool) {
+	return pdu.Assessed, pdu.EventType == EventType_SalvoImpactAssessed
 }
 
-func (e SalvoImpactProcessed) ToPdu() GameEventPdu {
+func (e SalvoImpactAssessed) ToPdu() GameEventPdu {
 	return GameEventPdu{
-		EventType: EventType_SalvoImpactProcessed,
-		Processed: &e,
+		GameId: e.GameId,
+		EventType: EventType_SalvoImpactAssessed,
+		Assessed:  &e,
 	}
 }
 
-type GameAborted struct {
+type GameQuited struct {
 	GameId    string
 	AbortedBy string
 }
 
-func NewAbortedFromPdu(pdu GameEventPdu) (*GameAborted, bool) {
-	return pdu.Aborted, pdu.EventType == EventType_GameAborted
+func NewQuitedFromPdu(pdu GameEventPdu) (*GameQuited, bool) {
+	return pdu.Quited, pdu.EventType == EventType_GameQuited
 }
 
-func (e GameAborted) ToPdu() GameEventPdu {
+func (e GameQuited) ToPdu() GameEventPdu {
 	return GameEventPdu{
-		EventType: EventType_GameAborted,
-		Aborted:   &e,
+		GameId:    e.GameId,
+		EventType: EventType_GameQuited,
+		Quited:    &e,
 	}
 }
 
@@ -192,6 +197,7 @@ func NewCompletedFromPdu(pdu GameEventPdu) (*GameCompleted, bool) {
 
 func (e GameCompleted) ToPdu() GameEventPdu {
 	return GameEventPdu{
+		GameId: e.GameId,
 		EventType: EventType_GameCompleted,
 		Completed: &e,
 	}
