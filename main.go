@@ -3,10 +3,8 @@ package main
 import (
 	"flag"
 	"github.com/MarcGrol/zeeslag/infra"
+	"github.com/MarcGrol/zeeslag/ui"
 
-	"github.com/google/uuid"
-
-	"github.com/MarcGrol/zeeslag/core"
 	"github.com/MarcGrol/zeeslag/logic"
 )
 
@@ -19,25 +17,16 @@ func init() {
 func main() {
 	flag.Parse()
 
-	// shared channels:
+	// channels shareed by both service as userinterface
 	channelsToSelf := infra.NewChannelsToSelf()
-
 	channelsToOther := infra.NewChannelsToOther()
 
-	evtStore := infra.NewBasicEventStore()
-	coreLogic := logic.NewGameService(evtStore)
-
+	// Start service in background
+	coreLogic := logic.NewGameService(infra.NewBasicEventStore())
 	playerService := infra.NewPlayerService(playerName, channelsToSelf, channelsToOther, coreLogic)
-	playerService.ListenInBackground()
+	go playerService.Listen()
 
-	gameId := uuid.New().String()
-
-	playerService.Command(
-		core.InviteForGame{GameId: gameId}.ToPdu())
-
-	// waitfor ^C or command-line actions
-	// readKeyboardInput
-	// convert keyboard input into command
-	// push command into service
-
+	// Start service in foreground
+	ui.NewUserInterface(channelsToSelf)
+	ui.Listen()
 }

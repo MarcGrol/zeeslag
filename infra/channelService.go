@@ -48,26 +48,24 @@ func NewChannelsToOther() *ChannelsToOther {
 	}
 }
 
-func (p *ChannelBasedService) ListenInBackground() {
-	go func() {
-		// Listen for commands from user and events from other service
-		for {
-			select {
+func (p *ChannelBasedService) Listen() {
+	// Listen for commands from user and events from other service
+	for {
+		select {
 
-			case c := <-p.channelsToSelf.FromPlayer:
-				err := p.service.OnCommand(c)
-				if err != nil {
-					log.Printf("Error processing command from user: %+v", err)
-				}
+		case c := <-p.channelsToSelf.FromPlayer:
+			err := p.service.OnCommand(c)
+			if err != nil {
+				log.Printf("Error processing command from user: %+v", err)
+			}
 
-			case c := <-p.channelsToOther.FromOther:
-				err := p.service.OnEvent(c)
-				if err != nil {
-					log.Printf("Error processing event from other: %+v", err)
-				}
+		case c := <-p.channelsToOther.FromOther:
+			err := p.service.OnEvent(c)
+			if err != nil {
+				log.Printf("Error processing event from other: %+v", err)
 			}
 		}
-	}()
+	}
 }
 
 func (p *ChannelBasedService) Command(command core.GameCommandPdu) {
