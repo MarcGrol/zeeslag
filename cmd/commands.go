@@ -1,5 +1,12 @@
 package cmd
 
+
+type CommandService interface {
+	OnStart(cmd StartGame) error
+	OnAccept(cmd AcceptGame) error
+	OnFire(cmd Salvo) error
+}
+
 type StartGame struct {
 	GameId string
 }
@@ -33,12 +40,6 @@ func (c Salvo) ToPdu() GameCommandPdu {
 	}
 }
 
-type CommandService interface {
-	OnStart(cmd StartGame)
-	OnAccept(cmd AcceptGame)
-	OnFire(cmd Salvo)
-}
-
 type CommandType int
 
 const (
@@ -50,6 +51,7 @@ const (
 )
 
 type GameCommandPdu struct {
+	GameId string
 	CommandType CommandType
 	Start       *StartGame
 	Accept      *AcceptGame

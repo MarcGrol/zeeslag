@@ -1,33 +1,34 @@
 package service
 
 import (
+	"fmt"
 	"github.com/MarcGrol/zeeslag/cmd"
+	"log"
 )
 
 type ChannelBasedPlayerService struct {
 	playerName     string
-	games          map[string]ZeeslagService
 	commandChannel chan cmd.GameCommandPdu
+	cmdService cmd.CommandService
 }
 
-func NewPlayerService(playerName string) *ChannelBasedPlayerService {
+func NewPlayerService(playerName string, cmdService cmd.CommandService) *ChannelBasedPlayerService {
 	return &ChannelBasedPlayerService{
 		playerName:     playerName,
-		games:          map[string]ZeeslagService{},
 		commandChannel: make(chan cmd.GameCommandPdu),
+		cmdService: cmdService,
 	}
-}
-
-func  (p *ChannelBasedPlayerService)getGameOnUid(id string) (ZeeslagService, bool) {
-	game, found := p.games[id]
-	return game, found
 }
 
 func (p *ChannelBasedPlayerService) ListenInBackground() {
 	go func() {
 		// Listen for commmands
 		for {
-			<-p.commandChannel
+			c := <-p.commandChannel
+			err := p.onCommand(c)
+			if err != nil {
+				log.Printf("Error processing command: %+v", err)
+			}
 		}
 	}()
 }
@@ -36,8 +37,18 @@ func (p *ChannelBasedPlayerService) Command(command cmd.GameCommandPdu) {
 	p.commandChannel <- command
 }
 
-func (p *ChannelBasedPlayerService)onCommand(command	 cmd.GameCommandPdu) {
-	// TODO delegate to service
-
+func (p *ChannelBasedPlayerService)onCommand(command cmd.GameCommandPdu) error {
+	switch command.CommandType {
+	case cmd.CommandType_Start:
+		return p.cmdService.OnStart(*command.Start)
+	case cmd.CommandType_Accept:
+		return p.cmdService.OnAccept(*command.Accept)
+	case cmd.CommandType_Fire:
+		return p.cmdService.OnFire(*command.Fire)
+	default:
+		err := fmt.Errorf("Unrcognized command: %+v", command)
+		log.Fatal(err.Error())
+		return err
+	}
 }
 

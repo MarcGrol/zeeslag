@@ -2,59 +2,15 @@ package main
 
 import (
 	"flag"
+	"github.com/MarcGrol/zeeslag/store"
 
 	"github.com/google/uuid"
 
-	"github.com/MarcGrol/zeeslag/service"
 	"github.com/MarcGrol/zeeslag/cmd"
-
+	"github.com/MarcGrol/zeeslag/service"
 )
 
-//       A                            B
-// ------------------startup by A------------------------
-// gameInitiated
-// gridPopulated
-//                                gameAccepted
-//                                gridPopulated
-// gameAccepted
-//
-// ------------------salvo by A--------------------------
-//
-// saloFired
-//                                salvoReceived
-// salvoImpactProcessed
-//
-// ------------------salvo by B--------------------------
-//
-//                                salvoFired
-// salvoReceived
-//                                salvoImpactProcessed
-//
-// ------------------salvo by A--------------------------
-// ...
-// ------------------salvo by B--------------------------
-// ...
-// ------------------salvo by A--------------------------
-// ...
-// ------------------salvo by B--------------------------
-// ...
-// ------------------B has won---------------------------
-//
 
-// commands                   A: events stored       B: events stored
-// A -> B: initiateGame       gameInitiated          gameAccepted
-// B -> A: acceptGame         gameAccepted
-//                            gridPopulated          grodPopulated
-//
-// A -> B: fireSalvo          salvoFired             salvoReceived
-// B -> A: reportSalvoImpact  salvoImpactProcessed   salvoImpactProccessed
-//
-// B -> A: fireSalvo          salvoReceived          salvoFired
-// A -> B: reportSalvoImpact                         salvoImpactProcessed
-//
-// ...
-// ...
-// A -> B: markCompleted      gameCompleted          gameCompleted
 
 var playerName string
 func init() {
@@ -64,7 +20,10 @@ func init() {
 func main() {
 	flag.Parse()
 
-	playerService := service.NewPlayerService(playerName)
+	evtStore := store.NewEventStore()
+	coreService := service.NewZeeslagService(evtStore)
+
+	playerService := service.NewPlayerService(playerName, coreService)
 	playerService.ListenInBackground()
 
 	gameId := uuid.New().String()

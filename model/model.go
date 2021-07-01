@@ -6,6 +6,7 @@ import (
 	"github.com/MarcGrol/zeeslag/evt"
 )
 
+
 // Aggregate
 type Game struct {
 	GameId         string
