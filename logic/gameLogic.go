@@ -10,7 +10,6 @@ var commandStateDisppatching = []commandGameState{
 		description: "",
 		gameState:   Idle,
 		commandType: core.CommandType_InviteForGame,
-
 		callback:    inviteForGame,
 		nextState:   InvitationPending,
 	},
@@ -47,76 +46,67 @@ var commandStateDisppatching = []commandGameState{
 		gameState:   Active,
 		commandType: core.CommandType_Fire,
 		callback:    fireSalvo,
-		nextState:   Active,
+		nextState:   WaitforAssessment,
 	},
 }
 
 var eventStateDispatching = []eventGameState{
 	{
 		description: "",
-		gameState: Idle,
-		eventType: core.EventType_GridPopulated,
-		callback:  onGridPopulated	,
-		nextState: Created,
+		gameState:   Idle,
+		eventType:   core.EventType_GridPopulated,
+		callback:    onGridPopulated,
+		nextState:   Created,
 	},
 	{
 		description: "",
-		gameState: Created,
-		eventType: core.EventType_InvitedForGame,
-		callback:  onInvitedForGame,
-		nextState: InvitationPending,
+		gameState:   Created,
+		eventType:   core.EventType_InvitedForGame,
+		callback:    onInvitedForGame,
+		nextState:   InvitationPending,
 	},
 	{
 		description: "",
-		gameState: InvitationPending,
-		eventType: core.EventType_GameAccepted,
-		callback:  onInvitationAccepted,
-		nextState: Active,
+		gameState:   InvitationPending,
+		eventType:   core.EventType_GameAccepted,
+		callback:    onInvitationAccepted,
+		nextState:   Active,
 	},
 	{
 		description: "",
-		gameState: InvitationPending,
-		eventType: core.EventType_GameRejected,
-		callback:  onInvitationRejected,
-		nextState: Rejected,
+		gameState:   InvitationPending,
+		eventType:   core.EventType_GameRejected,
+		callback:    onInvitationRejected,
+		nextState:   Rejected,
 	},
 	{
 		description: "",
-		gameState: Active,
-		eventType: core.EventType_GameQuited,
-		callback:  onGameQuited,
-		nextState: Quited,
+		gameState:   Active,
+		eventType:   core.EventType_GameQuited,
+		callback:    onGameQuited,
+		nextState:   Quited,
 	},
 	{
 		description: "",
-		gameState: Active,
-		eventType: core.EventType_SalvoFired,
-		callback:  onSalvoFired,
-		nextState: Active,
+		gameState:   Active,
+		eventType:   core.EventType_SalvoFired,
+		callback:    onSalvoFired,
+		nextState:   Active,
 	},
 	{
 		description: "",
-		gameState: Active,
-		eventType: core.EventType_SalvoImpactAssessed,
-		callback:  onSalvoImpactAssessed,
-		nextState: Active,
+		gameState:   Active,
+		eventType:   core.EventType_SalvoImpactAssessed,
+		callback:    onSalvoImpactAssessed,
+		nextState:   Active,
 	},
 	{
 		description: "",
-		gameState: Active,
-		eventType: core.EventType_GameCompleted,
-		callback:  onGameCompleted,
-		nextState: Completed,
+		gameState:   Active,
+		eventType:   core.EventType_GameCompleted,
+		callback:    onGameCompleted,
+		nextState:   Completed,
 	},
-}
-
-
-func onGridPopulated(s *GameLogicService, game Game, pdu core.GameEventPdu) ([]core.GameEventPdu, error) {
-	return func(evt core.GridPopulated) ([]core.GameEventPdu, error) {
-		events := []core.GameEventPdu{pdu}
-
-		return events, nil
-	}(*pdu.Populated)
 }
 
 func inviteForGame(s *GameLogicService, game Game, pdu core.GameCommandPdu) ([]core.GameEventPdu, error) {
@@ -125,7 +115,7 @@ func inviteForGame(s *GameLogicService, game Game, pdu core.GameCommandPdu) ([]c
 
 		// 	Validate: fields
 		if cmd.GameId == "" || cmd.Initiator == "" || cmd.Invitee == "" {
-			return events, fmt.Errorf("Invalid input for command %+v", cmd	)
+			return events, fmt.Errorf("Invalid input for command %+v", cmd)
 		}
 
 		// Compose events
@@ -134,7 +124,7 @@ func inviteForGame(s *GameLogicService, game Game, pdu core.GameCommandPdu) ([]c
 			Initiator: cmd.Initiator,
 			Invitee:   cmd.Invitee,
 		}.ToPdu()
-		events = append(events,pdu)
+		events = append(events, pdu)
 
 		return events, nil
 	}(*pdu.Invite)
@@ -146,14 +136,15 @@ func acceptGame(s *GameLogicService, game Game, pdu core.GameCommandPdu) ([]core
 
 		// 	Validate: fields
 		if cmd.GameId == "" {
-			return events, fmt.Errorf("Invalid input for command %+v", cmd	)
+			return events, fmt.Errorf("Invalid input for command %+v", cmd)
 		}
 
 		// Compose events
 		pdu := core.GameAccepted{
-			GameId:    cmd.GameId,
+			GameId:  cmd.GameId,
+			Starter: game.Initiator,
 		}.ToPdu()
-		events = append(events,pdu)
+		events = append(events, pdu)
 
 		return events, nil
 	}(*pdu.Accept)
@@ -165,14 +156,14 @@ func rejectGame(s *GameLogicService, game Game, pdu core.GameCommandPdu) ([]core
 
 		// 	Validate: fields
 		if cmd.GameId == "" {
-			return events, fmt.Errorf("Invalid input for command %+v", cmd	)
+			return events, fmt.Errorf("Invalid input for command %+v", cmd)
 		}
 
 		// Compose events
 		pdu := core.GameRejected{
-			GameId:    cmd.GameId,
+			GameId: cmd.GameId,
 		}.ToPdu()
-		events = append(events,pdu)
+		events = append(events, pdu)
 
 		return events, nil
 	}(*pdu.Reject)
@@ -184,16 +175,16 @@ func fireSalvo(s *GameLogicService, game Game, pdu core.GameCommandPdu) ([]core.
 
 		// 	Validate: fields
 		if cmd.GameId == "" || cmd.FiredBy == "" || len(cmd.Targets) == 0 {
-			return events, fmt.Errorf("Invalid input for command %+v", cmd	)
+			return events, fmt.Errorf("Invalid input for command %+v", cmd)
 		}
 
 		// Compose events
 		pdu := core.SalvoFired{
-			GameId:    cmd.GameId,
+			GameId:  cmd.GameId,
 			FiredBy: cmd.FiredBy,
 			Targets: cmd.Targets,
 		}.ToPdu()
-		events = append(events,pdu)
+		events = append(events, pdu)
 
 		return events, nil
 	}(*pdu.Fire)
@@ -205,17 +196,25 @@ func quitGame(s *GameLogicService, game Game, pdu core.GameCommandPdu) ([]core.G
 
 		// 	Validate: fields
 		if cmd.GameId == "" {
-			return events, fmt.Errorf("Invalid input for command %+v", cmd	)
+			return events, fmt.Errorf("Invalid input for command %+v", cmd)
 		}
 
 		// Compose events
 		pdu := core.GameQuited{
-			GameId:    cmd.GameId,
+			GameId: cmd.GameId,
 		}.ToPdu()
-		events = append(events,pdu)
+		events = append(events, pdu)
 
 		return events, nil
 	}(*pdu.Quit)
+}
+
+func onGridPopulated(s *GameLogicService, game Game, pdu core.GameEventPdu) ([]core.GameEventPdu, error) {
+	return func(evt core.GridPopulated) ([]core.GameEventPdu, error) {
+		events := []core.GameEventPdu{pdu}
+
+		return events, nil
+	}(*pdu.Populated)
 }
 
 func onInvitedForGame(s *GameLogicService, game Game, pdu core.GameEventPdu) ([]core.GameEventPdu, error) {

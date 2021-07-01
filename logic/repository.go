@@ -5,17 +5,17 @@ import (
 	"github.com/MarcGrol/zeeslag/core"
 )
 
-type GameRepository struct{
+type GameRepository struct {
 	store api.GameEventStorer
 }
 
 func NewGameRepository(store api.GameEventStorer) *GameRepository {
 	return &GameRepository{
-		store:store,
+		store: store,
 	}
 }
 
-func (s *GameRepository)StoreEvent(event core.GameEventPdu) error {
+func (s *GameRepository) StoreEvent(event core.GameEventPdu) error {
 	return s.store.AddEventToGame(event)
 }
 
@@ -29,4 +29,3 @@ func (s *GameRepository) GetGameOnId(gameId string) (*Game, error) {
 
 	return game, nil
 }
-

@@ -18,7 +18,7 @@ func NewBasicEventStore() api.GameEventStorer {
 func (s *basicEventStore) GetEventsOnGame(gameId string) ([]core.GameEventPdu, error) {
 	found := []core.GameEventPdu{}
 
-	for _, e := range s.events{
+	for _, e := range s.events {
 		if e.GameId == gameId {
 			found = append(found, e)
 		}

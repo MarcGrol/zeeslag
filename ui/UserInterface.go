@@ -8,7 +8,7 @@ type UserInterface struct {
 	toSelf *infra.ChannelsToSelf
 }
 
-func NewUserInterface(toSelf *infra.ChannelsToSelf) *UserInterface{
+func NewUserInterface(toSelf *infra.ChannelsToSelf) *UserInterface {
 	return &UserInterface{
 		toSelf: toSelf,
 	}
@@ -24,11 +24,10 @@ func Listen() error {
 	// convert keyboard input into command
 	// push command into service
 
-
 	/*
 
 		playerService.Command(
 			core.InviteForGame{GameId: gameId}.ToPdu())
-	 */
+	*/
 	return nil
 }

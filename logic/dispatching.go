@@ -24,7 +24,7 @@ func newCommandDispatcher(gameStates []commandGameState) *commandDispatcher {
 	}
 }
 
-func (et commandDispatcher) resolveEvent(gameState GameStatus, commandType core.CommandType) (commandDispatcherCallback, GameStatus,bool) {
+func (et commandDispatcher) resolveEvent(gameState GameStatus, commandType core.CommandType) (commandDispatcherCallback, GameStatus, bool) {
 	for _, h := range et.commandHandlers {
 		if h.gameState == gameState && h.commandType == commandType {
 			return h.callback, h.nextState, true
@@ -34,17 +34,17 @@ func (et commandDispatcher) resolveEvent(gameState GameStatus, commandType core.
 }
 
 type eventDispatcher struct {
-	eventHandlers  []eventGameState
+	eventHandlers []eventGameState
 }
 
-type eventDispatcherCallback func(service *GameLogicService, game Game, event core.GameEventPdu) ([]core.GameEventPdu,error)
+type eventDispatcherCallback func(service *GameLogicService, game Game, event core.GameEventPdu) ([]core.GameEventPdu, error)
 
 type eventGameState struct {
 	description string
-	gameState GameStatus
-	eventType core.EventType
-	callback  eventDispatcherCallback
-	nextState GameStatus
+	gameState   GameStatus
+	eventType   core.EventType
+	callback    eventDispatcherCallback
+	nextState   GameStatus
 }
 
 func newEventDispatcher(gameStates []eventGameState) *eventDispatcher {
@@ -53,7 +53,7 @@ func newEventDispatcher(gameStates []eventGameState) *eventDispatcher {
 	}
 }
 
-func (et eventDispatcher) resolveCommand(gameState GameStatus, eventType core.EventType) (eventDispatcherCallback, GameStatus,bool) {
+func (et eventDispatcher) resolveCommand(gameState GameStatus, eventType core.EventType) (eventDispatcherCallback, GameStatus, bool) {
 	for _, h := range et.eventHandlers {
 		if h.gameState == gameState && h.eventType == eventType {
 			return h.callback, h.nextState, true
@@ -61,5 +61,3 @@ func (et eventDispatcher) resolveCommand(gameState GameStatus, eventType core.Ev
 	}
 	return nil, 0, false
 }
-
-

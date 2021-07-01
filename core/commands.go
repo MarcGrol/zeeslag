@@ -15,7 +15,7 @@ const (
 	CommandType_Quit
 )
 
-func (ct CommandType)String() string{
+func (ct CommandType) String() string {
 	switch ct {
 	case CommandType_InviteForGame:
 		return "invite"
@@ -36,15 +36,15 @@ type GameCommandPdu struct {
 	GameId      string
 	CommandType CommandType
 
-	Invite      *InviteForGame
-	Accept      *AcceptGame
-	Reject      *RejectGame
-	Fire        *FireSalvo
-	Quit        *QuitGame
+	Invite *InviteForGame
+	Accept *AcceptGame
+	Reject *RejectGame
+	Fire   *FireSalvo
+	Quit   *QuitGame
 }
 
 type InviteForGame struct {
-	GameId string
+	GameId    string
 	Initiator string
 	Invitee   string
 }
@@ -58,17 +58,17 @@ func (c InviteForGame) ToPdu() GameCommandPdu {
 }
 
 type AcceptGame struct {
-	GameId string
+	GameId  string
+	Starter string
 }
 
 func (c AcceptGame) ToPdu() GameCommandPdu {
 	return GameCommandPdu{
-		GameId: c.GameId,
+		GameId:      c.GameId,
 		CommandType: CommandType_Accept,
 		Accept:      &c,
 	}
 }
-
 
 type RejectGame struct {
 	GameId string
@@ -76,21 +76,21 @@ type RejectGame struct {
 
 func (c RejectGame) ToPdu() GameCommandPdu {
 	return GameCommandPdu{
-		GameId: c.GameId,
+		GameId:      c.GameId,
 		CommandType: CommandType_Reject,
 		Reject:      &c,
 	}
 }
 
 type FireSalvo struct {
-	GameId string
+	GameId  string
 	FiredBy string
 	Targets []Coordinate
 }
 
 func (c FireSalvo) ToPdu() GameCommandPdu {
 	return GameCommandPdu{
-		GameId: c.GameId,
+		GameId:      c.GameId,
 		CommandType: CommandType_Fire,
 		Fire:        &c,
 	}
@@ -102,9 +102,8 @@ type QuitGame struct {
 
 func (c QuitGame) ToPdu() GameCommandPdu {
 	return GameCommandPdu{
-		GameId: c.GameId,
+		GameId:      c.GameId,
 		CommandType: CommandType_Quit,
 		Quit:        &c,
 	}
 }
-

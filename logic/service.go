@@ -49,7 +49,7 @@ func (s *GameLogicService) OnCommand(command core.GameCommandPdu) error {
 	// Safeguard that next state is set correctly
 	game.ApplyAll(events)
 	if game.Status != expectedNextStatus {
-		log.Printf("Unexpected next state %s for command: %+v, expected status: %s", game.Status, command, 	expectedNextStatus)
+		log.Printf("Unexpected next state %s for command: %+v, expected status: %s", game.Status, command, expectedNextStatus)
 		return err
 	}
 
@@ -102,7 +102,6 @@ func (s *GameLogicService) OnEvent(event core.GameEventPdu) error {
 			return err
 		}
 	}
-
 
 	return nil
 }

@@ -18,8 +18,7 @@ const (
 	EventType_GameCompleted
 )
 
-
-func (et EventType)String() string{
+func (et EventType) String() string {
 	switch et {
 	case EventType_GridPopulated:
 		return "populated"
@@ -39,7 +38,6 @@ func (et EventType)String() string{
 		return "unknown"
 	}
 }
-
 
 type GameEventPdu struct {
 	GameId    string
@@ -70,7 +68,7 @@ func NewGridPopulatedFromPdu(pdu GameEventPdu) (*GridPopulated, bool) {
 
 func (e GridPopulated) ToPdu() GameEventPdu {
 	return GameEventPdu{
-		GameId: e.GameId,
+		GameId:    e.GameId,
 		EventType: EventType_GridPopulated,
 		Populated: &e,
 	}
@@ -105,15 +103,15 @@ func NewGameRejectedFromPdu(pdu GameEventPdu) (*GameRejected, bool) {
 
 func (e GameRejected) ToPdu() GameEventPdu {
 	return GameEventPdu{
-		GameId: e.GameId,
+		GameId:    e.GameId,
 		EventType: EventType_GameRejected,
 		Rejected:  &e,
 	}
 }
 
 type GameAccepted struct {
-	GameId   string
-	Starting string
+	GameId  string
+	Starter string
 }
 
 func NewGameAcceptedFromPdu(pdu GameEventPdu) (*GameAccepted, bool) {
@@ -122,7 +120,7 @@ func NewGameAcceptedFromPdu(pdu GameEventPdu) (*GameAccepted, bool) {
 
 func (e GameAccepted) ToPdu() GameEventPdu {
 	return GameEventPdu{
-		GameId: e.GameId,
+		GameId:    e.GameId,
 		EventType: EventType_GameAccepted,
 		Accepted:  &e,
 	}
@@ -140,7 +138,7 @@ func NewSalvoFiredFromPdu(pdu GameEventPdu) (*SalvoFired, bool) {
 
 func (e SalvoFired) ToPdu() GameEventPdu {
 	return GameEventPdu{
-		GameId: e.GameId,
+		GameId:    e.GameId,
 		EventType: EventType_SalvoFired,
 		Fired:     &e,
 	}
@@ -176,7 +174,7 @@ func NewImpactAssessedFromPdu(pdu GameEventPdu) (*SalvoImpactAssessed, bool) {
 
 func (e SalvoImpactAssessed) ToPdu() GameEventPdu {
 	return GameEventPdu{
-		GameId: e.GameId,
+		GameId:    e.GameId,
 		EventType: EventType_SalvoImpactAssessed,
 		Assessed:  &e,
 	}
@@ -210,7 +208,7 @@ func NewCompletedFromPdu(pdu GameEventPdu) (*GameCompleted, bool) {
 
 func (e GameCompleted) ToPdu() GameEventPdu {
 	return GameEventPdu{
-		GameId: e.GameId,
+		GameId:    e.GameId,
 		EventType: EventType_GameCompleted,
 		Completed: &e,
 	}

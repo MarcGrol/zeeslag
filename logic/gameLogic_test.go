@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestPopulated( t *testing.T) {
+func TestPopulated(t *testing.T) {
 	// given
 	preconditions := []core.GameEventPdu{}
 	cmd := core.GridPopulated{
@@ -16,7 +16,7 @@ func TestPopulated( t *testing.T) {
 	}
 
 	// when
-	game, err := when(preconditions, cmd.GameId, func( sut core.Service) error{
+	game, err := when(preconditions, cmd.GameId, func(sut core.Service) error {
 		return sut.OnEvent(cmd.ToPdu())
 	})
 
@@ -25,7 +25,7 @@ func TestPopulated( t *testing.T) {
 	assert.Equal(t, cmd.GameId, game.GameId)
 }
 
-func TestInvite( t *testing.T) {
+func TestInvite(t *testing.T) {
 	// given
 	preconditions := []core.GameEventPdu{}
 	event := core.InviteForGame{
@@ -35,7 +35,7 @@ func TestInvite( t *testing.T) {
 	}
 
 	// when
-	game, err := when(preconditions, event.GameId, func( sut core.Service) error{
+	game, err := when(preconditions, event.GameId, func(sut core.Service) error {
 		return sut.OnCommand(event.ToPdu())
 	})
 
@@ -46,21 +46,21 @@ func TestInvite( t *testing.T) {
 	assert.Equal(t, event.Invitee, game.Invitee)
 }
 
-func NoTestInvited( t *testing.T) {
+func NoTestInvited(t *testing.T) {
 	// given
 	preconditions := []core.GameEventPdu{
-			core.GridPopulated{
-				GameId:    "1",
-			}.ToPdu(),
+		core.GridPopulated{
+			GameId: "1",
+		}.ToPdu(),
 	}
 	event := core.InvitedForGame{
-		GameId: "1",
+		GameId:    "1",
 		Initiator: "me",
 		Invitee:   "you",
 	}
 
 	// when
-	game, err := when(preconditions, event.GameId, 	func( sut core.Service) error{
+	game, err := when(preconditions, event.GameId, func(sut core.Service) error {
 		return sut.OnEvent(event.ToPdu())
 	})
 
@@ -71,7 +71,7 @@ func NoTestInvited( t *testing.T) {
 	assert.Equal(t, event.Invitee, game.Invitee)
 }
 
-func TestAccept( t *testing.T) {
+func TestAccept(t *testing.T) {
 	// given
 	preconditions := []core.GameEventPdu{
 		core.InvitedForGame{
@@ -81,20 +81,22 @@ func TestAccept( t *testing.T) {
 		}.ToPdu(),
 	}
 	command := core.AcceptGame{
-		GameId:    "1",
+		GameId:  "1",
+		Starter: "me",
 	}
 
 	// when
-	game, err := when(preconditions, command.GameId, func( sut core.Service) error{
+	game, err := when(preconditions, command.GameId, func(sut core.Service) error {
 		return sut.OnCommand(command.ToPdu())
 	})
 
 	// then
 	assert.NoError(t, err)
 	assert.Equal(t, command.GameId, game.GameId)
+	assert.Equal(t, command.Starter, game.Starter)
 }
 
-func TestAccepted( t *testing.T) {
+func TestAccepted(t *testing.T) {
 	// given
 
 	// when
@@ -103,7 +105,7 @@ func TestAccepted( t *testing.T) {
 
 }
 
-func TestFire( t *testing.T) {
+func TestFire(t *testing.T) {
 	// given
 	gameId := "1"
 	preconditions := []core.GameEventPdu{
@@ -113,19 +115,19 @@ func TestFire( t *testing.T) {
 			Invitee:   "you",
 		}.ToPdu(),
 		core.GameAccepted{
-			GameId:    gameId,
+			GameId: gameId,
 		}.ToPdu(),
 	}
 	command := core.FireSalvo{
 		GameId:  gameId,
 		FiredBy: "mw",
 		Targets: []core.Coordinate{
-			{Row:    1, Column: 2},
+			{Row: 1, Column: 2},
 		},
 	}
 
 	// when
-	game, err := when(preconditions, command.GameId, func( sut core.Service) error{
+	game, err := when(preconditions, command.GameId, func(sut core.Service) error {
 		return sut.OnCommand(command.ToPdu())
 	})
 
@@ -134,7 +136,7 @@ func TestFire( t *testing.T) {
 	assert.Equal(t, command.GameId, game.GameId)
 }
 
-func TestFired( t *testing.T) {
+func TestFired(t *testing.T) {
 	// given
 
 	// when
@@ -143,7 +145,7 @@ func TestFired( t *testing.T) {
 
 }
 
-func TestAssessed( t *testing.T) {
+func TestAssessed(t *testing.T) {
 	// given
 
 	// when
@@ -152,7 +154,7 @@ func TestAssessed( t *testing.T) {
 
 }
 
-func TestCompleted( t *testing.T) {
+func TestCompleted(t *testing.T) {
 	// given
 
 	// when
@@ -161,7 +163,7 @@ func TestCompleted( t *testing.T) {
 
 }
 
-func TestQuited( t *testing.T) {
+func TestQuited(t *testing.T) {
 	// given
 
 	// when
@@ -170,8 +172,7 @@ func TestQuited( t *testing.T) {
 
 }
 
-
-func when(preconditions []core.GameEventPdu, gameId string, testFunc func(core.Service) error) (*Game,error){
+func when(preconditions []core.GameEventPdu, gameId string, testFunc func(core.Service) error) (*Game, error) {
 	repo := NewGameRepository(infra.NewBasicEventStore())
 	sut := NewGameLogicService(repo)
 
