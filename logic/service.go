@@ -37,6 +37,8 @@ func (s *GameLogicService) OnCommand(command core.GameCommandPdu) error {
 		return fmt.Errorf("Command %+v could not be resolved for state %+v", command.CommandType, game.Status)
 	}
 
+	log.Printf("Handler found for status: %s and command: %s", game.Status, command.CommandType)
+
 	// Call state-command specific logic
 	events, err := dispatchFunc(s, *game, command)
 	if err != nil {

@@ -10,7 +10,6 @@ type Game struct {
 	GameId         string
 	Initiator      string
 	Invitee        string
-	Starting       string
 	Status         GameStatus
 	SalvosFired    []Salvo
 	SalvosReceived []Salvo
@@ -111,6 +110,7 @@ const (
 	InvitationPending
 	Rejected
 	Active
+	WaitforAssessment
 	Quited
 	Completed
 )
@@ -168,14 +168,12 @@ func (g *Game) Apply(event core.GameEventPdu) {
 }
 
 func (g *Game) ApplyGridPopulated(evt core.GridPopulated) {
-	log.Printf("<<<<<ApplyGridPopulated:%+v", g)
 	g.GameId = evt.GameId
 	g.Status = Created
-	log.Printf("<<< pplyGridPopulated:%+v", g)
 }
 
 func (g *Game) ApplyInvitedForGame(evt core.InvitedForGame) {
-	g.GameId = evt.GameId
+		g.GameId = evt.GameId
 	g.Initiator = evt.Initiator
 	g.Invitee = evt.Invitee
 	g.Status = InvitationPending
@@ -183,28 +181,30 @@ func (g *Game) ApplyInvitedForGame(evt core.InvitedForGame) {
 
 func (g *Game) ApplyGameAccepted(evt core.GameAccepted) {
 	g.GameId = evt.GameId
+	g.Status = Active
 }
 
 func (g *Game) ApplyGameRejected(evt core.GameRejected) {
 	g.GameId = evt.GameId
+	g.Status = Rejected
 }
 
 func (g *Game) ApplySalvoFired(evt core.SalvoFired) {
 	g.GameId = evt.GameId
-}
-
-func (g *Game) ApplySalvoReceived(evt core.SalvoReceived) {
-	g.GameId = evt.GameId
+	g.Status = WaitforAssessment
 }
 
 func (g *Game) ApplySalvoImpactAssessed(evt core.SalvoImpactAssessed) {
 	g.GameId = evt.GameId
+	g.Status = Active
 }
 
 func (g *Game) ApplyGameAborted(evt core.GameQuited) {
 	g.GameId = evt.GameId
+	g.Status = Quited
 }
 
 func (g *Game) ApplyGameCompleted(evt core.GameCompleted) {
 	g.GameId = evt.GameId
+	g.Status = Completed
 }

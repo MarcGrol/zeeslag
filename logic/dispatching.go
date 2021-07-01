@@ -11,6 +11,7 @@ type commandDispatcher struct {
 type commandDispatcherCallback func(service *GameLogicService, game Game, command core.GameCommandPdu) ([]core.GameEventPdu, error)
 
 type commandGameState struct {
+	description string
 	gameState   GameStatus
 	commandType core.CommandType
 	callback    commandDispatcherCallback
@@ -39,6 +40,7 @@ type eventDispatcher struct {
 type eventDispatcherCallback func(service *GameLogicService, game Game, event core.GameEventPdu) ([]core.GameEventPdu,error)
 
 type eventGameState struct {
+	description string
 	gameState GameStatus
 	eventType core.EventType
 	callback  eventDispatcherCallback

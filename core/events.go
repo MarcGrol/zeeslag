@@ -146,12 +146,6 @@ func (e SalvoFired) ToPdu() GameEventPdu {
 	}
 }
 
-type SalvoReceived struct {
-	GameId  string
-	FiredBy string
-	Targets []Coordinate
-}
-
 type Coordinate struct {
 	Row    int
 	Column int

@@ -39,12 +39,14 @@ type GameCommandPdu struct {
 	Invite      *InviteForGame
 	Accept      *AcceptGame
 	Reject      *RejectGame
-	Fire        *Salvo
+	Fire        *FireSalvo
 	Quit        *QuitGame
 }
 
 type InviteForGame struct {
 	GameId string
+	Initiator string
+	Invitee   string
 }
 
 func (c InviteForGame) ToPdu() GameCommandPdu {
@@ -80,11 +82,13 @@ func (c RejectGame) ToPdu() GameCommandPdu {
 	}
 }
 
-type Salvo struct {
+type FireSalvo struct {
 	GameId string
+	FiredBy string
+	Targets []Coordinate
 }
 
-func (c Salvo) ToPdu() GameCommandPdu {
+func (c FireSalvo) ToPdu() GameCommandPdu {
 	return GameCommandPdu{
 		GameId: c.GameId,
 		CommandType: CommandType_Fire,
