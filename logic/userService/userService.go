@@ -21,16 +21,20 @@ func NewUserService(repo *repo.GameRepository) *UserService {
 	}
 }
 
-func (s *UserService) OnQuery(gameId string) (*model.Game, error) {
+func (s *UserService) OnQuery(gameId string) (*model.Game, bool, error) {
 	return s.repo.GetGameOnId(gameId)
 }
 
 func (s *UserService) OnCommand(command core.GameCommandPdu) error {
 
-	game, err := s.repo.GetGameOnId(command.GameId)
+	game, exist, err := s.repo.GetGameOnId(command.GameId)
 	if err != nil {
 		log.Printf("Error fetching game for command %+v: %+v", command, err)
 		return err
+	}
+
+	if !exist {
+		return fmt.Errorf("Game not found")
 	}
 
 	log.Printf("Got command %s (%+v) for game: %s 	(%+v)", command.CommandType, command, game.Status, game)

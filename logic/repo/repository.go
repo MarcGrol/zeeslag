@@ -34,13 +34,13 @@ func (s *GameRepository) StoreEvents(events []core.GameEventPdu) error {
 	return nil
 }
 
-func (s *GameRepository) GetGameOnId(gameId string) (*model.Game, error) {
-	events, err := s.store.GetEventsOnGame(gameId)
+func (s *GameRepository) GetGameOnId(gameId string) (*model.Game, bool, error) {
+	events, found, err := s.store.GetEventsOnGame(gameId)
 	if err != nil {
-		return nil, err
+		return nil, false, err
 	}
 
 	game := model.NewGame(events)
 
-	return game, nil
+	return game, found, nil
 }

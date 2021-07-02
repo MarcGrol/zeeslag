@@ -17,7 +17,7 @@ func NewBasicEventStore() api.GameEventStorer {
 	}
 }
 
-func (s *basicEventStore) GetEventsOnGame(gameId string) ([]core.GameEventPdu, error) {
+func (s *basicEventStore) GetEventsOnGame(gameId string) ([]core.GameEventPdu, bool, error) {
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
 
@@ -29,7 +29,7 @@ func (s *basicEventStore) GetEventsOnGame(gameId string) ([]core.GameEventPdu, e
 		}
 	}
 
-	return found, nil
+	return found, len(found) > 0, nil
 }
 
 func (s *basicEventStore) AddEventsToGame(events []core.GameEventPdu) error {

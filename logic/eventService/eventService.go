@@ -24,10 +24,13 @@ func NewEventService(repo *repo.GameRepository, peerer api.Peerer) *UserService 
 }
 
 func (s *UserService) OnEvent(event core.GameEventPdu) error {
-	game, err := s.repo.GetGameOnId(event.GameId)
+	game, found, err := s.repo.GetGameOnId(event.GameId)
 	if err != nil {
 		log.Printf("Error fetching game for event %+v: %+v", event, err)
 		return err
+	}
+	if !found {
+		return 	fmt.Errorf("Game not found")
 	}
 
 	log.Printf("Got event %s (%+v) for game: %s (%+v)", event.EventType, event, game.Status, game)

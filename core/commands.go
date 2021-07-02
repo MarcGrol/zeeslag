@@ -58,7 +58,7 @@ func (c InviteForGame) ToPdu() GameCommandPdu {
 	}
 }
 
-type AcceptGame struct {
+type 		AcceptGame struct {
 	GameId  string
 	Starter string
 }

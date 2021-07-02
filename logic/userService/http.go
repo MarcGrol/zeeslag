@@ -9,7 +9,7 @@ import (
 )
 
 func RegisterHTTPEndpoint(router *mux.Router, service *UserService) {
-	subRouter := router.PathPrefix("/api/user").Subrouter()
+	subRouter := router.PathPrefix("/api/user/game").Subrouter()
 	subRouter.HandleFunc("/new", service.inviteForGame()).Methods("POST")
 	subRouter.HandleFunc("/{gameId}", service.getGame()).Methods("GET")
 	subRouter.HandleFunc("/{gameId}/salvo", service.fireSalvo()).Methods("POST")
@@ -47,12 +47,16 @@ func (s *UserService) getGame() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		gameId := mux.Vars(r)["gameId"]
 
-		game, err := s.OnQuery(gameId)
+		game, exists, err := s.OnQuery(gameId)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
+		if !exists {
+			w.WriteHeader(http.StatusNotFound)
+			return
+		}
 		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(game)
 	}

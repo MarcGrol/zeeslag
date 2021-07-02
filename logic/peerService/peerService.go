@@ -21,10 +21,14 @@ func NewPeerService(repo *repo.GameRepository) *PeerService {
 }
 
 func (s *PeerService) OnPeerEvent(event core.GameMsgPdu) error {
-	game, err := s.repo.GetGameOnId(event.GameId)
+	game, exists, err := s.repo.GetGameOnId(event.GameId)
 	if err != nil {
 		log.Printf("Error fetching game for event %+v: %+v", event, err)
 		return err
+	}
+
+	if !exists {
+		return fmt.Errorf("Game not found")
 	}
 
 	log.Printf("Got event %s (%+v) for game: %s (%+v)", event.MsgType, event, game.Status, game)
