@@ -1,6 +1,6 @@
 package core
 
-type CommandService interface {
+type CommandServicer interface {
 	OnCommand(cmd GameCommandPdu) error
 }
 

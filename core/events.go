@@ -1,6 +1,6 @@
 package core
 
-type EventService interface {
+type EventServicer interface {
 	OnEvent(cmd GameEventPdu) error
 }
 

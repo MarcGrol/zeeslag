@@ -1,4 +1,4 @@
-package logic
+package model
 
 import (
 	"github.com/MarcGrol/zeeslag/core"

@@ -2,10 +2,14 @@ package main
 
 import (
 	"flag"
-	"github.com/MarcGrol/zeeslag/infra"
-	"github.com/MarcGrol/zeeslag/ui"
+	"net/http"
 
-	"github.com/MarcGrol/zeeslag/logic"
+	"github.com/gorilla/mux"
+
+	"github.com/MarcGrol/zeeslag/infra"
+	"github.com/MarcGrol/zeeslag/logic/commandService"
+	"github.com/MarcGrol/zeeslag/logic/eventService"
+	"github.com/MarcGrol/zeeslag/logic/repo"
 )
 
 var playerName string
@@ -18,18 +22,13 @@ func main() {
 	flag.Parse()
 
 	pubsub := infra.NewBasicPubsub()
+	repo := repo.NewGameRepository(infra.NewBasicEventStore(), pubsub)
 
-	// channels shareed by both service as userinterface
-	channelsToSelf := infra.NewChannelsToSelf()
+	router := mux.NewRouter()
 
-	{
-		// Start own service in background
-		coreLogic := logic.NewGameLogicService(logic.NewGameRepository(infra.NewBasicEventStore(), pubsub))
-		playerService := infra.NewPlayerService(playerName, channelsToSelf, coreLogic)
-		go playerService.Listen()
-	}
+	eventService.RegisterHTTPEndpoint(router, eventService.NewEventService(repo))
+	commandService.RegisterHTTPEndpoint(router, commandService.NewCommandService(repo))
 
-	// Start service in foreground
-	ui.NewUserInterface(channelsToSelf)
-	ui.Listen()
+	// Start listening for http requests in foreground
+	http.ListenAndServe(":8080", router)
 }

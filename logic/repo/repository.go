@@ -1,8 +1,9 @@
-package logic
+package repo
 
 import (
 	"github.com/MarcGrol/zeeslag/api"
 	"github.com/MarcGrol/zeeslag/core"
+	"github.com/MarcGrol/zeeslag/model"
 )
 
 type GameRepository struct {
@@ -33,13 +34,13 @@ func (s *GameRepository) StoreEvents(events []core.GameEventPdu) error {
 	return nil
 }
 
-func (s *GameRepository) GetGameOnId(gameId string) (*Game, error) {
+func (s *GameRepository) GetGameOnId(gameId string) (*model.Game, error) {
 	events, err := s.store.GetEventsOnGame(gameId)
 	if err != nil {
 		return nil, err
 	}
 
-	game := NewGame(events)
+	game := model.NewGame(events)
 
 	return game, nil
 }
