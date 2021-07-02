@@ -34,7 +34,7 @@ func TestInvite(t *testing.T) {
 func TestAccept(t *testing.T) {
 	// given
 	preconditions := []core.GameEventPdu{
-		core.InvitedForGame{
+		core.GameInvitionReceived{
 			GameId:    "1",
 			Initiator: "me",
 			Invitee:   "you",
@@ -60,7 +60,7 @@ func TestFire(t *testing.T) {
 	// given
 	gameId := "1"
 	preconditions := []core.GameEventPdu{
-		core.InvitedForGame{
+		core.GameInvitionReceived{
 			GameId:    gameId,
 			Initiator: "me",
 			Invitee:   "you",

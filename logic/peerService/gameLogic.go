@@ -10,20 +10,20 @@ var eventStateDispatching = []eventGameState{
 	{
 		description: "",
 		gameState:   model.Idle,
-		eventType:   core.EventType_InvitedForGame,
+		eventType:   core.EventType_GameInvitationReceived,
 		callback:    onInvited,
 		nextState:   model.Invited,
 	}, {
 		description: "",
 		gameState:   model.InvitationPending,
-		eventType:   core.EventType_GameAccepted,
+		eventType:   core.EventType_GameInvitationAccepted,
 		callback:    onInvitationAccepted,
 		nextState:   model.Active,
 	},
 	{
 		description: "",
 		gameState:   model.InvitationPending,
-		eventType:   core.EventType_GameRejected,
+		eventType:   core.EventType_GameInvitationRejected,
 		callback:    onInvitationRejected,
 		nextState:   model.Rejected,
 	},
@@ -58,7 +58,7 @@ var eventStateDispatching = []eventGameState{
 }
 
 func onInvited(s *PeerService, game model.Game, pdu core.GameEventPdu) ([]core.GameEventPdu, error) {
-	return func(evt core.InvitedForGame) ([]core.GameEventPdu, error) {
+	return func(evt core.GameInvitionReceived) ([]core.GameEventPdu, error) {
 		events := []core.GameEventPdu{}
 
 		log.Printf("invited:%+v", pdu)

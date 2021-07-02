@@ -61,7 +61,7 @@ func inviteForGame(s *UserService, game model.Game, pdu core.GameCommandPdu) ([]
 		}
 
 		// Compose events
-		invitedForGame := core.InvitationForGameSent{
+		invitedForGame := core.GameInvitationSent{
 			GameId:    cmd.GameId,
 			Initiator: cmd.Initiator,
 			Invitee:   cmd.Invitee,

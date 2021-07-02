@@ -9,10 +9,10 @@ type EventType int
 const (
 	EventType_Unknown = iota
 	EventType_GridPopulated
-	EventType_InvitationforGameSent
-	EventType_InvitedForGame
-	EventType_GameAccepted
-	EventType_GameRejected
+	EventType_GameInvitationSent
+	EventType_GameInvitationReceived
+	EventType_GameInvitationAccepted
+	EventType_GameInvitationRejected
 	EventType_SalvoFired
 	EventType_SalvoImpactAssessed
 	EventType_GameQuited
@@ -23,13 +23,13 @@ func (et EventType) String() string {
 	switch et {
 	case EventType_GridPopulated:
 		return "populated"
-	case EventType_InvitationforGameSent:
+	case EventType_GameInvitationSent:
 		return "invitation-sent"
-	case EventType_InvitedForGame:
-		return "invited"
-	case EventType_GameAccepted:
+	case EventType_GameInvitationReceived:
+		return "invitation-received"
+	case EventType_GameInvitationAccepted:
 		return "accepted"
-	case EventType_GameRejected:
+	case EventType_GameInvitationRejected:
 		return "rejected"
 	case EventType_SalvoImpactAssessed:
 		return "assessed"
@@ -47,8 +47,8 @@ type GameEventPdu struct {
 	EventType EventType
 
 	Populated      *GridPopulated
-	InvitationSent *InvitationForGameSent
-	Invited        *InvitedForGame
+	InvitationSent *GameInvitationSent
+	Invited        *GameInvitionReceived
 	Accepted       *GameAccepted
 	Rejected       *GameRejected
 	Fired          *SalvoFired
@@ -75,31 +75,31 @@ func (e GridPopulated) ToPdu() GameEventPdu {
 }
 
 // events
-type InvitationForGameSent struct {
+type GameInvitationSent struct {
 	GameId    string
 	Initiator string
 	Invitee   string
 }
 
-func (e InvitationForGameSent) ToPdu() GameEventPdu {
+func (e GameInvitationSent) ToPdu() GameEventPdu {
 	return GameEventPdu{
 		GameId:         e.GameId,
-		EventType:      EventType_InvitationforGameSent,
+		EventType:      EventType_GameInvitationSent,
 		InvitationSent: &e,
 	}
 }
 
 // events
-type InvitedForGame struct {
+type GameInvitionReceived struct {
 	GameId    string
 	Initiator string
 	Invitee   string
 }
 
-func (e InvitedForGame) ToPdu() GameEventPdu {
+func (e GameInvitionReceived) ToPdu() GameEventPdu {
 	return GameEventPdu{
 		GameId:    e.GameId,
-		EventType: EventType_InvitedForGame,
+		EventType: EventType_GameInvitationReceived,
 		Invited:   &e,
 	}
 }
@@ -111,7 +111,7 @@ type GameRejected struct {
 func (e GameRejected) ToPdu() GameEventPdu {
 	return GameEventPdu{
 		GameId:    e.GameId,
-		EventType: EventType_GameRejected,
+		EventType: EventType_GameInvitationRejected,
 		Rejected:  &e,
 	}
 }
@@ -124,7 +124,7 @@ type GameAccepted struct {
 func (e GameAccepted) ToPdu() GameEventPdu {
 	return GameEventPdu{
 		GameId:    e.GameId,
-		EventType: EventType_GameAccepted,
+		EventType: EventType_GameInvitationAccepted,
 		Accepted:  &e,
 	}
 }

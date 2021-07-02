@@ -150,13 +150,13 @@ func (g *Game) Apply(event core.GameEventPdu) {
 	switch event.EventType {
 	case core.EventType_GridPopulated:
 		g.ApplyGridPopulated(*event.Populated)
-	case core.EventType_InvitationforGameSent:
+	case core.EventType_GameInvitationSent:
 		g.ApplyInvitationForGameSent(*event.InvitationSent)
-	case core.EventType_InvitedForGame:
+	case core.EventType_GameInvitationReceived:
 		g.ApplyInvitedForGame(*event.Invited)
-	case core.EventType_GameAccepted:
+	case core.EventType_GameInvitationAccepted:
 		g.ApplyGameAccepted(*event.Accepted)
-	case core.EventType_GameRejected:
+	case core.EventType_GameInvitationRejected:
 		g.ApplyGameRejected(*event.Rejected)
 	case core.EventType_SalvoFired:
 		g.ApplySalvoFired(*event.Fired)
@@ -176,14 +176,14 @@ func (g *Game) ApplyGridPopulated(evt core.GridPopulated) {
 	g.Status = Created
 }
 
-func (g *Game) ApplyInvitationForGameSent(evt core.InvitationForGameSent) {
+func (g *Game) ApplyInvitationForGameSent(evt core.GameInvitationSent) {
 	g.GameId = evt.GameId
 	g.Initiator = evt.Initiator
 	g.Invitee = evt.Invitee
 	g.Status = InvitationPending
 }
 
-func (g *Game) ApplyInvitedForGame(evt core.InvitedForGame) {
+func (g *Game) ApplyInvitedForGame(evt core.GameInvitionReceived) {
 	g.GameId = evt.GameId
 	g.Initiator = evt.Initiator
 	g.Invitee = evt.Invitee

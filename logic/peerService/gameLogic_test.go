@@ -14,7 +14,7 @@ func TestInvited(t *testing.T) {
 	// given
 	preconditions := []core.GameEventPdu{}
 
-	event := core.InvitedForGame{
+	event := core.GameInvitionReceived{
 		GameId:    "1",
 		Initiator: "me",
 		Invitee:   "you",

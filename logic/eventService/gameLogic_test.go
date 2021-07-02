@@ -34,7 +34,7 @@ func NoTestInvited(t *testing.T) {
 			GameId: "1",
 		}.ToPdu(),
 	}
-	event := core.InvitedForGame{
+	event := core.GameInvitionReceived{
 		GameId:    "1",
 		Initiator: "me",
 		Invitee:   "you",
