@@ -17,14 +17,15 @@ func init() {
 func main() {
 	flag.Parse()
 
+	pubsub := infra.NewBasicPubsub()
+
 	// channels shareed by both service as userinterface
 	channelsToSelf := infra.NewChannelsToSelf()
-	channelsToOther := infra.NewChannelsToOther()
 
 	{
 		// Start own service in background
-		coreLogic := logic.NewGameLogicService(logic.NewGameRepository(infra.NewBasicEventStore()))
-		playerService := infra.NewPlayerService(playerName, channelsToSelf, channelsToOther, coreLogic)
+		coreLogic := logic.NewGameLogicService(logic.NewGameRepository(infra.NewBasicEventStore(), pubsub))
+		playerService := infra.NewPlayerService(playerName, channelsToSelf, coreLogic)
 		go playerService.Listen()
 	}
 

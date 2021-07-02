@@ -27,7 +27,9 @@ func (s *basicEventStore) GetEventsOnGame(gameId string) ([]core.GameEventPdu, e
 	return found, nil
 }
 
-func (s *basicEventStore) AddEventToGame(evt core.GameEventPdu) error {
-	s.events = append(s.events, evt)
+func (s *basicEventStore) AddEventsToGame(events []core.GameEventPdu) error {
+	for _, e := range events {
+		s.events = append(s.events, e)
+	}
 	return nil
 }

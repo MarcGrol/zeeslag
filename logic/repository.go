@@ -6,17 +6,19 @@ import (
 )
 
 type GameRepository struct {
-	store api.GameEventStorer
+	store     api.GameEventStorer
+	publisher api.Publisher
 }
 
-func NewGameRepository(store api.GameEventStorer) *GameRepository {
+func NewGameRepository(store api.GameEventStorer, publisher api.Publisher) *GameRepository {
 	return &GameRepository{
-		store: store,
+		store:     store,
+		publisher: publisher,
 	}
 }
 
-func (s *GameRepository) StoreEvent(event core.GameEventPdu) error {
-	return s.store.AddEventToGame(event)
+func (s *GameRepository) StoreEvents(events []core.GameEventPdu) error {
+	return s.store.AddEventsToGame(events)
 }
 
 func (s *GameRepository) GetGameOnId(gameId string) (*Game, error) {

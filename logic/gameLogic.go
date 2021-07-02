@@ -2,6 +2,7 @@ package logic
 
 import (
 	"fmt"
+
 	"github.com/MarcGrol/zeeslag/core"
 )
 

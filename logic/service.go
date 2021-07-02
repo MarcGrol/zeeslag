@@ -54,12 +54,10 @@ func (s *GameLogicService) OnCommand(command core.GameCommandPdu) error {
 	}
 
 	// Store resulting events
-	for _, e := range events {
-		err = s.repo.StoreEvent(e)
-		if err != nil {
-			log.Printf("Error storing event %+v: %s", e, err)
-			return err
-		}
+	err = s.repo.StoreEvents(events)
+	if err != nil {
+		log.Printf("Error storing event %+v: %s", events, err)
+		return err
 	}
 
 	return nil
@@ -95,13 +93,12 @@ func (s *GameLogicService) OnEvent(event core.GameEventPdu) error {
 	}
 
 	// Store resulting events
-	for _, e := range events {
-		err = s.repo.StoreEvent(e)
-		if err != nil {
-			log.Printf("Error storing event %+v: %s", e, err)
-			return err
-		}
+	err = s.repo.StoreEvents(events)
+	if err != nil {
+		log.Printf("Error storing events %+v: %s", events, err)
+		return err
 	}
+
 
 	return nil
 }

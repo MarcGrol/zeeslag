@@ -173,18 +173,16 @@ func TestQuited(t *testing.T) {
 }
 
 func when(preconditions []core.GameEventPdu, gameId string, testFunc func(core.Service) error) (*Game, error) {
-	repo := NewGameRepository(infra.NewBasicEventStore())
+	repo := NewGameRepository(infra.NewBasicEventStore(), infra.NewBasicPubsub())
 	sut := NewGameLogicService(repo)
 
 	// force preconditions to be set
-	for _, e := range preconditions {
-		err := repo.StoreEvent(e)
-		if err != nil {
-			return nil, err
-		}
+	err := repo.StoreEvents(preconditions)
+	if err != nil {
+		return nil, err
 	}
 
-	err := testFunc(sut)
+	err = testFunc(sut)
 	if err != nil {
 		return nil, err
 	}

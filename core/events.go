@@ -62,10 +62,6 @@ type GridPopulated struct {
 	SClass []Coordinate
 }
 
-func NewGridPopulatedFromPdu(pdu GameEventPdu) (*GridPopulated, bool) {
-	return pdu.Populated, pdu.EventType == EventType_GridPopulated
-}
-
 func (e GridPopulated) ToPdu() GameEventPdu {
 	return GameEventPdu{
 		GameId:    e.GameId,
@@ -81,10 +77,6 @@ type InvitedForGame struct {
 	Invitee   string
 }
 
-func NewInvitedForGameFromPdu(pdu GameEventPdu) (*InvitedForGame, bool) {
-	return pdu.Invited, pdu.EventType == EventType_InvitedForGame
-}
-
 func (e InvitedForGame) ToPdu() GameEventPdu {
 	return GameEventPdu{
 		GameId:    e.GameId,
@@ -95,10 +87,6 @@ func (e InvitedForGame) ToPdu() GameEventPdu {
 
 type GameRejected struct {
 	GameId string
-}
-
-func NewGameRejectedFromPdu(pdu GameEventPdu) (*GameRejected, bool) {
-	return pdu.Rejected, pdu.EventType == EventType_GameRejected
 }
 
 func (e GameRejected) ToPdu() GameEventPdu {
@@ -114,10 +102,6 @@ type GameAccepted struct {
 	Starter string
 }
 
-func NewGameAcceptedFromPdu(pdu GameEventPdu) (*GameAccepted, bool) {
-	return pdu.Accepted, pdu.EventType == EventType_GameAccepted
-}
-
 func (e GameAccepted) ToPdu() GameEventPdu {
 	return GameEventPdu{
 		GameId:    e.GameId,
@@ -130,10 +114,6 @@ type SalvoFired struct {
 	GameId  string
 	FiredBy string
 	Targets []Coordinate
-}
-
-func NewSalvoFiredFromPdu(pdu GameEventPdu) (*SalvoFired, bool) {
-	return pdu.Fired, pdu.EventType == EventType_SalvoFired
 }
 
 func (e SalvoFired) ToPdu() GameEventPdu {
@@ -168,10 +148,6 @@ const (
 	Kill
 )
 
-func NewImpactAssessedFromPdu(pdu GameEventPdu) (*SalvoImpactAssessed, bool) {
-	return pdu.Assessed, pdu.EventType == EventType_SalvoImpactAssessed
-}
-
 func (e SalvoImpactAssessed) ToPdu() GameEventPdu {
 	return GameEventPdu{
 		GameId:    e.GameId,
@@ -183,10 +159,6 @@ func (e SalvoImpactAssessed) ToPdu() GameEventPdu {
 type GameQuited struct {
 	GameId    string
 	AbortedBy string
-}
-
-func NewQuitedFromPdu(pdu GameEventPdu) (*GameQuited, bool) {
-	return pdu.Quited, pdu.EventType == EventType_GameQuited
 }
 
 func (e GameQuited) ToPdu() GameEventPdu {
