@@ -99,7 +99,8 @@ func TestQuited(t *testing.T) {
 
 func when(preconditions []core.GameEventPdu, gameId string, testFunc func(service *EventService) error) (*model.Game, error) {
 	repo := repo.NewGameRepository(infra.NewBasicEventStore(), infra.NewBasicPubsub())
-	sut := NewEventService(repo)
+	peerer := infra.NewBasicPeer("")
+	sut := NewEventService(repo, peerer)
 
 	// force preconditions to be set
 	err := repo.StoreEvents(preconditions)

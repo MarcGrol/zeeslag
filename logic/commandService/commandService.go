@@ -2,21 +2,24 @@ package commandService
 
 import (
 	"fmt"
-	repo2 "github.com/MarcGrol/zeeslag/logic/repo"
+	"github.com/MarcGrol/zeeslag/api"
 	"log"
 
 	"github.com/MarcGrol/zeeslag/core"
+	"github.com/MarcGrol/zeeslag/logic/repo"
 )
 
 type CommandService struct {
-	repo              *repo2.GameRepository
+	repo              *repo.GameRepository
 	commandDispatcher *commandDispatcher
+	peerer            api.Peerer
 }
 
-func NewCommandService(repo *repo2.GameRepository) *CommandService {
+func NewCommandService(repo *repo.GameRepository, peerer api.Peerer) *CommandService {
 	return &CommandService{
 		repo:              repo,
 		commandDispatcher: newCommandDispatcher(commandStateDisppatching),
+		peerer:            peerer,
 	}
 }
 

@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -12,23 +13,31 @@ import (
 	"github.com/MarcGrol/zeeslag/logic/repo"
 )
 
-var playerName string
+var (
+	localPort     string
+	remotePeerUrl string
+	playerName    string
+)
 
 func init() {
-	flag.StringVar(&playerName, "playernamw", "me", "Player name to use for the game")
+	flag.StringVar(&localPort, "localPort", ":8080", "Local listen port")
+	flag.StringVar(&remotePeerUrl, "remotePeerUrl", "http://localhost:8081", "Hostname of remote peer")
+	flag.StringVar(&playerName, "playerName", "me", "Player name to use for the game")
 }
 
 func main() {
 	flag.Parse()
+	flag.PrintDefaults()
 
 	pubsub := infra.NewBasicPubsub()
 	repo := repo.NewGameRepository(infra.NewBasicEventStore(), pubsub)
+	peer := infra.NewBasicPeer(remotePeerUrl)
 
 	router := mux.NewRouter()
 
-	eventService.RegisterHTTPEndpoint(router, eventService.NewEventService(repo))
-	commandService.RegisterHTTPEndpoint(router, commandService.NewCommandService(repo))
+	eventService.RegisterHTTPEndpoint(router, eventService.NewEventService(repo, peer))
+	commandService.RegisterHTTPEndpoint(router, commandService.NewCommandService(repo, peer))
 
 	// Start listening for http requests in foreground
-	http.ListenAndServe(":8080", router)
+	log.Fatal(http.ListenAndServe(localPort, router))
 }

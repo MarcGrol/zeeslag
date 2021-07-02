@@ -2,6 +2,7 @@ package eventService
 
 import (
 	"fmt"
+	"github.com/MarcGrol/zeeslag/api"
 	"log"
 
 	"github.com/MarcGrol/zeeslag/core"
@@ -11,12 +12,14 @@ import (
 type EventService struct {
 	repo            *repo.GameRepository
 	eventDispatcher *eventDispatcher
+	peerer          api.Peerer
 }
 
-func NewEventService(repo *repo.GameRepository) *EventService {
+func NewEventService(repo *repo.GameRepository, peerer api.Peerer) *EventService {
 	return &EventService{
 		repo:            repo,
 		eventDispatcher: newEventDispatcher(eventStateDispatching),
+		peerer:          peerer,
 	}
 }
 

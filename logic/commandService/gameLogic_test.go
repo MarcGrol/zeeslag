@@ -89,7 +89,8 @@ func TestFire(t *testing.T) {
 
 func when(preconditions []core.GameEventPdu, gameId string, testFunc func(service *CommandService) error) (*model.Game, error) {
 	repo := repo.NewGameRepository(infra.NewBasicEventStore(), infra.NewBasicPubsub())
-	sut := NewCommandService(repo)
+	peerer := infra.NewBasicPeer("")
+	sut := NewCommandService(repo, peerer)
 
 	// force preconditions to be set
 	err := repo.StoreEvents(preconditions)
