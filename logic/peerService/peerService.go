@@ -10,29 +10,29 @@ import (
 
 type PeerService struct {
 	repo            *repo.GameRepository
-	eventDispatcher *eventDispatcher
+	eventDispatcher *msgDispatcher
 }
 
 func NewPeerService(repo *repo.GameRepository) *PeerService {
 	return &PeerService{
 		repo:            repo,
-		eventDispatcher: newEventDispatcher(eventStateDispatching),
+		eventDispatcher: newMsgDispatcher(msgStateDispatching),
 	}
 }
 
-func (s *PeerService) OnEvent(event core.GameEventPdu) error {
+func (s *PeerService) OnPeerEvent(event core.GameMsgPdu) error {
 	game, err := s.repo.GetGameOnId(event.GameId)
 	if err != nil {
 		log.Printf("Error fetching game for event %+v: %+v", event, err)
 		return err
 	}
 
-	log.Printf("Got event %s (%+v) for game: %s (%+v)", event.EventType, event, game.Status, game)
+	log.Printf("Got event %s (%+v) for game: %s (%+v)", event.MsgType, event, game.Status, game)
 
 	// Lookup if this state-event can be handled
-	dispatchFunc, expectedNextStatus, found := s.eventDispatcher.resolve(game.Status, event.EventType)
+	dispatchFunc, expectedNextStatus, found := s.eventDispatcher.resolve(game.Status, event.MsgType)
 	if !found {
-		return fmt.Errorf("Event %+v could not be resolved for state %s", event.EventType, game.Status)
+		return fmt.Errorf("Event %+v could not be resolved for state %s", event.MsgType, game.Status)
 	}
 
 	// Call state-event specific logic

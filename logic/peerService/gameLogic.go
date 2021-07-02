@@ -3,114 +3,129 @@ package peerService
 import (
 	"github.com/MarcGrol/zeeslag/core"
 	"github.com/MarcGrol/zeeslag/model"
-	"log"
 )
 
-var eventStateDispatching = []eventGameState{
+var msgStateDispatching = []msgGameState{
 	{
 		description: "",
 		gameState:   model.Idle,
-		eventType:   core.EventType_GameInvitationReceived,
+		msgType:     core.ReplicatiomMsgType_PeerHasInvitedYouForGame,
 		callback:    onInvited,
 		nextState:   model.Invited,
 	}, {
 		description: "",
 		gameState:   model.InvitationPending,
-		eventType:   core.EventType_GameInvitationAccepted,
+		msgType:     core.ReplicatiomMsgType_PeerHasAcceptedInvitation,
 		callback:    onInvitationAccepted,
 		nextState:   model.Active,
 	},
 	{
 		description: "",
 		gameState:   model.InvitationPending,
-		eventType:   core.EventType_GameInvitationRejected,
+		msgType:     core.ReplicatiomMsgType_PeerHasRejectedInvitation,
 		callback:    onInvitationRejected,
 		nextState:   model.Rejected,
 	},
 	{
 		description: "",
 		gameState:   model.Active,
-		eventType:   core.EventType_GameQuited,
+		msgType:     core.ReplicatiomMsgType_PeerHasQuited,
 		callback:    onGameQuited,
 		nextState:   model.Quited,
 	},
 	{
 		description: "",
 		gameState:   model.Active,
-		eventType:   core.EventType_SalvoFired,
+		msgType:     core.ReplicatiomMsgType_PeerHasFiredSalvo,
 		callback:    onSalvoFired,
 		nextState:   model.Active,
 	},
 	{
 		description: "",
 		gameState:   model.Active,
-		eventType:   core.EventType_SalvoImpactAssessed,
+		msgType:     core.ReplicatiomMsgType_PeerHasAssessedImpactOfSalvo,
 		callback:    onSalvoImpactAssessed,
 		nextState:   model.Active,
 	},
 	{
 		description: "",
 		gameState:   model.Active,
-		eventType:   core.EventType_GameCompleted,
+		msgType:     core.ReplicatiomMsgType_PeerHasCompleted,
 		callback:    onGameCompleted,
 		nextState:   model.Completed,
 	},
 }
 
-func onInvited(s *PeerService, game model.Game, pdu core.GameEventPdu) ([]core.GameEventPdu, error) {
-	return func(evt core.GameInvitionReceived) ([]core.GameEventPdu, error) {
+func onInvited(s *PeerService, game model.Game, pdu core.GameMsgPdu) ([]core.GameEventPdu, error) {
+	return func(msg core.PeerHasInvitedYouForGame) ([]core.GameEventPdu, error) {
 		events := []core.GameEventPdu{}
 
-		log.Printf("invited:%+v", pdu)
-		events = append(events, pdu)
+		recvd := core.GameInvitionReceived{
+			GameId:    msg.GameId,
+			Initiator: msg.Initiator,
+			Invitee:   msg.Invitee,
+		}
+		events = append(events, recvd.ToPdu())
 
 		return events, nil
 	}(*pdu.Invited)
 }
 
-func onInvitationAccepted(s *PeerService, game model.Game, pdu core.GameEventPdu) ([]core.GameEventPdu, error) {
-	return func(evt core.GameAccepted) ([]core.GameEventPdu, error) {
+func onInvitationAccepted(s *PeerService, game model.Game, pdu core.GameMsgPdu) ([]core.GameEventPdu, error) {
+	return func(msg core.PeerHasAcceptedGame) ([]core.GameEventPdu, error) {
 		events := []core.GameEventPdu{}
+
+		// TODO
 
 		return events, nil
 	}(*pdu.Accepted)
 }
 
-func onInvitationRejected(s *PeerService, game model.Game, pdu core.GameEventPdu) ([]core.GameEventPdu, error) {
-	return func(evt core.GameRejected) ([]core.GameEventPdu, error) {
+func onInvitationRejected(s *PeerService, game model.Game, pdu core.GameMsgPdu) ([]core.GameEventPdu, error) {
+	return func(msg core.PeerHasRejectedInvitation) ([]core.GameEventPdu, error) {
 		events := []core.GameEventPdu{}
+
+		// TODO
 
 		return events, nil
 	}(*pdu.Rejected)
 }
 
-func onGameQuited(s *PeerService, game model.Game, pdu core.GameEventPdu) ([]core.GameEventPdu, error) {
-	return func(evt core.GameQuited) ([]core.GameEventPdu, error) {
+func onGameQuited(s *PeerService, game model.Game, pdu core.GameMsgPdu) ([]core.GameEventPdu, error) {
+	return func(msg core.PeerHasQuited) ([]core.GameEventPdu, error) {
 		events := []core.GameEventPdu{}
+
+		// TODO
 
 		return events, nil
 	}(*pdu.Quited)
 }
 
-func onSalvoFired(s *PeerService, game model.Game, pdu core.GameEventPdu) ([]core.GameEventPdu, error) {
-	return func(evt core.SalvoFired) ([]core.GameEventPdu, error) {
+func onSalvoFired(s *PeerService, game model.Game, pdu core.GameMsgPdu) ([]core.GameEventPdu, error) {
+	return func(msg core.PeerHasFiredSalvo) ([]core.GameEventPdu, error) {
 		events := []core.GameEventPdu{}
+
+		// TODO
 
 		return events, nil
 	}(*pdu.Fired)
 }
 
-func onSalvoImpactAssessed(s *PeerService, game model.Game, pdu core.GameEventPdu) ([]core.GameEventPdu, error) {
-	return func(evt core.SalvoImpactAssessed) ([]core.GameEventPdu, error) {
+func onSalvoImpactAssessed(s *PeerService, game model.Game, pdu core.GameMsgPdu) ([]core.GameEventPdu, error) {
+	return func(msg core.PeerHasAssessedImpactOfSalvo) ([]core.GameEventPdu, error) {
 		events := []core.GameEventPdu{}
+
+		// TODO
 
 		return events, nil
 	}(*pdu.Assessed)
 }
 
-func onGameCompleted(s *PeerService, game model.Game, pdu core.GameEventPdu) ([]core.GameEventPdu, error) {
-	return func(evt core.GameCompleted) ([]core.GameEventPdu, error) {
+func onGameCompleted(s *PeerService, game model.Game, pdu core.GameMsgPdu) ([]core.GameEventPdu, error) {
+	return func(msg core.PeerHasCompleted) ([]core.GameEventPdu, error) {
 		events := []core.GameEventPdu{}
+
+		// TODO
 
 		return events, nil
 	}(*pdu.Completed)

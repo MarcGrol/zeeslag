@@ -10,24 +10,26 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestInvited(t *testing.T) {
+func TestPeerHasInvitedYouForGame(t *testing.T) {
 	// given
 	preconditions := []core.GameEventPdu{}
 
-	event := core.GameInvitionReceived{
+	msg := core.PeerHasInvitedYouForGame{
 		GameId:    "1",
 		Initiator: "me",
 		Invitee:   "you",
 	}
 
 	// when
-	game, err := when(preconditions, event.GameId, func(sut *PeerService) error {
-		return sut.OnEvent(event.ToPdu())
+	game, err := when(preconditions, msg.GameId, func(sut *PeerService) error {
+		return sut.OnPeerEvent(msg.ToPdu())
 	})
 
 	// then
 	assert.NoError(t, err)
-	assert.Equal(t, event.GameId, game.GameId)
+	assert.Equal(t, msg.GameId, game.GameId)
+	assert.Equal(t, msg.Initiator, game.Initiator)
+	assert.Equal(t, msg.Invitee, game.Invitee)
 }
 
 func TestAccepted(t *testing.T) {

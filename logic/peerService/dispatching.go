@@ -5,29 +5,29 @@ import (
 	"github.com/MarcGrol/zeeslag/model"
 )
 
-type eventDispatcher struct {
-	eventHandlers []eventGameState
+type msgDispatcher struct {
+	msgHandlers []msgGameState
 }
 
-type eventDispatcherCallback func(service *PeerService, game model.Game, event core.GameEventPdu) ([]core.GameEventPdu, error)
+type msgDispatcherCallback func(service *PeerService, game model.Game, msg core.GameMsgPdu) ([]core.GameEventPdu, error)
 
-type eventGameState struct {
+type msgGameState struct {
 	description string
 	gameState   model.GameStatus
-	eventType   core.EventType
-	callback    eventDispatcherCallback
+	msgType     core.ReplicatiomMsgType
+	callback    msgDispatcherCallback
 	nextState   model.GameStatus
 }
 
-func newEventDispatcher(gameStates []eventGameState) *eventDispatcher {
-	return &eventDispatcher{
-		eventHandlers: gameStates,
+func newMsgDispatcher(gameStates []msgGameState) *msgDispatcher {
+	return &msgDispatcher{
+		msgHandlers: gameStates,
 	}
 }
 
-func (et eventDispatcher) resolve(gameState model.GameStatus, eventType core.EventType) (eventDispatcherCallback, model.GameStatus, bool) {
-	for _, h := range et.eventHandlers {
-		if h.gameState == gameState && h.eventType == eventType {
+func (et msgDispatcher) resolve(gameState model.GameStatus, eventType core.ReplicatiomMsgType) (msgDispatcherCallback, model.GameStatus, bool) {
+	for _, h := range et.msgHandlers {
+		if h.gameState == gameState && h.msgType == eventType {
 			return h.callback, h.nextState, true
 		}
 	}

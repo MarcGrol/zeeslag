@@ -1,6 +1,8 @@
 package eventService
 
 import (
+	"encoding/json"
+	"github.com/MarcGrol/zeeslag/core"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -13,10 +15,19 @@ func RegisterHTTPEndpoint(router *mux.Router, service *UserService) {
 
 func (s *UserService) onEvent() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// TODO unpack request
+		event := core.GameEventPdu{}
+		err := json.NewDecoder(r.Body).Decode(&event)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
 
-		// TODO Convert into event
+		err = s.OnEvent(event)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
 
-		// TODO Push event into service
+		w.WriteHeader(http.StatusOK)
 	}
 }

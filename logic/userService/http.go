@@ -1,6 +1,8 @@
 package userService
 
 import (
+	"encoding/json"
+	"github.com/MarcGrol/zeeslag/core"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -15,33 +17,54 @@ func RegisterHTTPEndpoint(router *mux.Router, service *UserService) {
 
 func (s *UserService) inviteForGame() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// TODO unpack request
+		// unpack request
+		request := core.InviteForGame{}
+		err := json.NewDecoder(r.Body).Decode(&request)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
 
-		// TODO Convert into command
-
-		// TODO Push command into service
-
+		s.callService(w, request.ToPdu())
 	}
 }
 
 func (s *UserService) fireSalvo() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// TODO unpack request
+		// unpack request
+		request := core.FireSalvo{}
+		err := json.NewDecoder(r.Body).Decode(&request)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
 
-		// TODO Convert into command
-
-		// TODO Push command into service
-
+		s.callService(w, request.ToPdu())
 	}
 }
 
 func (s *UserService) getGame() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// TODO unpack request
+		gameId := mux.Vars(r)["gameId"]
 
-		// TODO Convert into query
+		game, err := s.OnQuery(gameId)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
 
-		// TODO Call service and feed result back
-
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(game)
 	}
+}
+
+func (s *UserService) callService(w http.ResponseWriter, pdu core.GameCommandPdu) {
+	//  Push command into service
+	err := s.OnCommand(pdu)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
 }
