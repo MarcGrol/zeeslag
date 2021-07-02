@@ -8,17 +8,17 @@ import (
 const channelBufferSize = 10
 
 type ChannelBasedService struct {
-	playerName      string
-	channelsToSelf  *ChannelsToSelf
-	service         core.Service
+	playerName     string
+	channelsToSelf *ChannelsToSelf
+	service        core.Service
 }
 
 func NewPlayerService(playerName string, channelsToSelf *ChannelsToSelf,
 	service core.Service) *ChannelBasedService {
 	return &ChannelBasedService{
-		playerName:      playerName,
-		channelsToSelf:  channelsToSelf,
-		service:         service,
+		playerName:     playerName,
+		channelsToSelf: channelsToSelf,
+		service:        service,
 	}
 }
 

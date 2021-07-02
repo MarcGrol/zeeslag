@@ -99,6 +99,5 @@ func (s *GameLogicService) OnEvent(event core.GameEventPdu) error {
 		return err
 	}
 
-
 	return nil
 }

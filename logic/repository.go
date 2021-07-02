@@ -18,7 +18,19 @@ func NewGameRepository(store api.GameEventStorer, publisher api.Publisher) *Game
 }
 
 func (s *GameRepository) StoreEvents(events []core.GameEventPdu) error {
-	return s.store.AddEventsToGame(events)
+	err := s.store.AddEventsToGame(events)
+	if err != nil {
+		return err
+	}
+
+	for _, e := range events {
+		err := s.publisher.Publish("game", e)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func (s *GameRepository) GetGameOnId(gameId string) (*Game, error) {

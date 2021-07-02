@@ -3,9 +3,11 @@ package infra
 import (
 	"github.com/MarcGrol/zeeslag/api"
 	"github.com/MarcGrol/zeeslag/core"
+	"sync"
 )
 
 type basicEventStore struct {
+	mutex  sync.Mutex
 	events []core.GameEventPdu
 }
 
@@ -16,6 +18,9 @@ func NewBasicEventStore() api.GameEventStorer {
 }
 
 func (s *basicEventStore) GetEventsOnGame(gameId string) ([]core.GameEventPdu, error) {
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
+
 	found := []core.GameEventPdu{}
 
 	for _, e := range s.events {
@@ -28,6 +33,9 @@ func (s *basicEventStore) GetEventsOnGame(gameId string) ([]core.GameEventPdu, e
 }
 
 func (s *basicEventStore) AddEventsToGame(events []core.GameEventPdu) error {
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
+
 	for _, e := range events {
 		s.events = append(s.events, e)
 	}
