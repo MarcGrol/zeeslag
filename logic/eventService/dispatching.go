@@ -9,7 +9,7 @@ type eventDispatcher struct {
 	eventHandlers []eventGameState
 }
 
-type eventDispatcherCallback func(service *UserService, game model.Game, event core.GameEventPdu) ([]core.GameEventPdu, error)
+type eventDispatcherCallback func(service *EventService, game model.Game, event core.GameEventPdu) ([]core.GameEventPdu, error)
 
 type eventGameState struct {
 	description string

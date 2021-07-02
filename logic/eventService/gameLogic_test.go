@@ -18,7 +18,7 @@ func TestPopulated(t *testing.T) {
 	}
 
 	// when
-	game, err := when(preconditions, cmd.GameId, func(sut *UserService) error {
+	game, err := when(preconditions, cmd.GameId, func(sut *EventService) error {
 		return sut.OnEvent(cmd.ToPdu())
 	})
 
@@ -41,7 +41,7 @@ func NoTestInvited(t *testing.T) {
 	}
 
 	// when
-	game, err := when(preconditions, event.GameId, func(sut *UserService) error {
+	game, err := when(preconditions, event.GameId, func(sut *EventService) error {
 		return sut.OnEvent(event.ToPdu())
 	})
 
@@ -97,7 +97,7 @@ func TestQuited(t *testing.T) {
 
 }
 
-func when(preconditions []core.GameEventPdu, gameId string, testFunc func(service *UserService) error) (*model.Game, error) {
+func when(preconditions []core.GameEventPdu, gameId string, testFunc func(service *EventService) error) (*model.Game, error) {
 	repo := repo.NewGameRepository(infra.NewBasicEventStore(), infra.NewBasicPubsub())
 	peerer := infra.NewBasicPeer("")
 	sut := NewEventService(repo, peerer)

@@ -34,10 +34,10 @@ func (s *UserService) OnCommand(command core.GameCommandPdu) error {
 	}
 
 	if !exist {
-		return fmt.Errorf("Game not found")
+		game = &model.Game{}
 	}
 
-	log.Printf("Got command %s (%+v) for game: %s 	(%+v)", command.CommandType, command, game.Status, game)
+	log.Printf("Got command %s (%+v) for game: %s (%+v)", command.CommandType, command, game.Status, game)
 
 	// Lookup if this state-command can be handled
 	dispatchFunc, expectedNextStatus, found := s.commandDispatcher.resolve(game.Status, command.CommandType)

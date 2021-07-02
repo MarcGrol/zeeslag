@@ -36,7 +36,7 @@ func main() {
 
 	router := mux.NewRouter()
 
-	eventService.RegisterHTTPEndpoint(router, eventService.NewEventService(repo, peer))
+	eventService.RegisterHTTPEndpoint(router, eventService.NewEventService(repo, pubsub, peer))
 	peerService.RegisterHTTPEndpoint(router, peerService.NewPeerService(repo))
 	userService.RegisterHTTPEndpoint(router, userService.NewUserService(repo))
 

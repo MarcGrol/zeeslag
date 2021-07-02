@@ -2,6 +2,7 @@ package peerService
 
 import (
 	"fmt"
+	"github.com/MarcGrol/zeeslag/model"
 	"log"
 
 	"github.com/MarcGrol/zeeslag/core"
@@ -28,7 +29,7 @@ func (s *PeerService) OnPeerEvent(event core.GameMsgPdu) error {
 	}
 
 	if !exists {
-		return fmt.Errorf("Game not found")
+		game = &model.Game{}
 	}
 
 	log.Printf("Got event %s (%+v) for game: %s (%+v)", event.MsgType, event, game.Status, game)

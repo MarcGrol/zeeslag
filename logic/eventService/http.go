@@ -8,12 +8,12 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func RegisterHTTPEndpoint(router *mux.Router, service *UserService) {
+func RegisterHTTPEndpoint(router *mux.Router, service *EventService) {
 	subRouter := router.PathPrefix("/api/event").Subrouter()
 	subRouter.HandleFunc("", service.onEvent()).Methods("POST")
 }
 
-func (s *UserService) onEvent() http.HandlerFunc {
+func (s *EventService) onEvent() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		event := core.GameEventPdu{}
 		err := json.NewDecoder(r.Body).Decode(&event)

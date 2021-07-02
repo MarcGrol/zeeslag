@@ -15,6 +15,10 @@ func RegisterHTTPEndpoint(router *mux.Router, service *UserService) {
 	subRouter.HandleFunc("/{gameId}/salvo", service.fireSalvo()).Methods("POST")
 }
 
+type HttpErrorResponse struct {
+	ErrorMessage string
+}
+
 func (s *UserService) inviteForGame() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// unpack request
@@ -22,6 +26,9 @@ func (s *UserService) inviteForGame() http.HandlerFunc {
 		err := json.NewDecoder(r.Body).Decode(&request)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(HttpErrorResponse{
+				ErrorMessage: err.Error(),
+			})
 			return
 		}
 
@@ -36,6 +43,9 @@ func (s *UserService) fireSalvo() http.HandlerFunc {
 		err := json.NewDecoder(r.Body).Decode(&request)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(HttpErrorResponse{
+				ErrorMessage: err.Error(),
+			})
 			return
 		}
 
@@ -50,11 +60,17 @@ func (s *UserService) getGame() http.HandlerFunc {
 		game, exists, err := s.OnQuery(gameId)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(HttpErrorResponse{
+				ErrorMessage: err.Error(),
+			})
 			return
 		}
 
 		if !exists {
 			w.WriteHeader(http.StatusNotFound)
+			json.NewEncoder(w).Encode(HttpErrorResponse{
+				ErrorMessage: err.Error(),
+			})
 			return
 		}
 		w.WriteHeader(http.StatusOK)
@@ -67,6 +83,9 @@ func (s *UserService) callService(w http.ResponseWriter, pdu core.GameCommandPdu
 	err := s.OnCommand(pdu)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(HttpErrorResponse{
+			ErrorMessage: err.Error(),
+		})
 		return
 	}
 

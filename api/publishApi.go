@@ -11,6 +11,6 @@ type Publisher interface {
 }
 
 type PubSub interface {
-	Subscribe(topic string, subscriber Subscriber)
+	Subscribe(topic string, subscriber Subscriber) error
 	Publisher
 }

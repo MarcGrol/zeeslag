@@ -15,6 +15,13 @@ var eventStateDispatching = []eventGameState{
 	},
 	{
 		description: "",
+		gameState:   model.InvitationPending,
+		eventType:   core.EventType_GameInvitationSent,
+		callback:    onGridPopulated,
+		nextState:   model.Created,
+	},
+	{
+		description: "",
 		gameState:   model.Created,
 		eventType:   core.EventType_GameInvitationReceived,
 		callback:    onInvitedForGame,
@@ -64,7 +71,7 @@ var eventStateDispatching = []eventGameState{
 	},
 }
 
-func onGridPopulated(s *UserService, game model.Game, pdu core.GameEventPdu) ([]core.GameEventPdu, error) {
+func onGridPopulated(s *EventService, game model.Game, pdu core.GameEventPdu) ([]core.GameEventPdu, error) {
 	return func(evt core.GridPopulated) ([]core.GameEventPdu, error) {
 		events := []core.GameEventPdu{pdu}
 
@@ -72,7 +79,7 @@ func onGridPopulated(s *UserService, game model.Game, pdu core.GameEventPdu) ([]
 	}(*pdu.Populated)
 }
 
-func onInvitedForGame(s *UserService, game model.Game, pdu core.GameEventPdu) ([]core.GameEventPdu, error) {
+func onInvitedForGame(s *EventService, game model.Game, pdu core.GameEventPdu) ([]core.GameEventPdu, error) {
 	return func(evt core.GameInvitionReceived) ([]core.GameEventPdu, error) {
 		events := []core.GameEventPdu{}
 
@@ -83,7 +90,7 @@ func onInvitedForGame(s *UserService, game model.Game, pdu core.GameEventPdu) ([
 	}(*pdu.Invited)
 }
 
-func onInvitationAccepted(s *UserService, game model.Game, pdu core.GameEventPdu) ([]core.GameEventPdu, error) {
+func onInvitationAccepted(s *EventService, game model.Game, pdu core.GameEventPdu) ([]core.GameEventPdu, error) {
 	return func(evt core.GameAccepted) ([]core.GameEventPdu, error) {
 		events := []core.GameEventPdu{}
 
@@ -94,7 +101,7 @@ func onInvitationAccepted(s *UserService, game model.Game, pdu core.GameEventPdu
 	}(*pdu.Accepted)
 }
 
-func onInvitationRejected(s *UserService, game model.Game, pdu core.GameEventPdu) ([]core.GameEventPdu, error) {
+func onInvitationRejected(s *EventService, game model.Game, pdu core.GameEventPdu) ([]core.GameEventPdu, error) {
 	return func(evt core.GameRejected) ([]core.GameEventPdu, error) {
 		events := []core.GameEventPdu{}
 
@@ -105,7 +112,7 @@ func onInvitationRejected(s *UserService, game model.Game, pdu core.GameEventPdu
 	}(*pdu.Rejected)
 }
 
-func onGameQuited(s *UserService, game model.Game, pdu core.GameEventPdu) ([]core.GameEventPdu, error) {
+func onGameQuited(s *EventService, game model.Game, pdu core.GameEventPdu) ([]core.GameEventPdu, error) {
 	return func(evt core.GameQuited) ([]core.GameEventPdu, error) {
 		events := []core.GameEventPdu{}
 
@@ -116,7 +123,7 @@ func onGameQuited(s *UserService, game model.Game, pdu core.GameEventPdu) ([]cor
 	}(*pdu.Quited)
 }
 
-func onSalvoFired(s *UserService, game model.Game, pdu core.GameEventPdu) ([]core.GameEventPdu, error) {
+func onSalvoFired(s *EventService, game model.Game, pdu core.GameEventPdu) ([]core.GameEventPdu, error) {
 	return func(evt core.SalvoFired) ([]core.GameEventPdu, error) {
 		events := []core.GameEventPdu{}
 
@@ -127,7 +134,7 @@ func onSalvoFired(s *UserService, game model.Game, pdu core.GameEventPdu) ([]cor
 	}(*pdu.Fired)
 }
 
-func onSalvoImpactAssessed(s *UserService, game model.Game, pdu core.GameEventPdu) ([]core.GameEventPdu, error) {
+func onSalvoImpactAssessed(s *EventService, game model.Game, pdu core.GameEventPdu) ([]core.GameEventPdu, error) {
 	return func(evt core.SalvoImpactAssessed) ([]core.GameEventPdu, error) {
 		events := []core.GameEventPdu{}
 
@@ -138,7 +145,7 @@ func onSalvoImpactAssessed(s *UserService, game model.Game, pdu core.GameEventPd
 	}(*pdu.Assessed)
 }
 
-func onGameCompleted(s *UserService, game model.Game, pdu core.GameEventPdu) ([]core.GameEventPdu, error) {
+func onGameCompleted(s *EventService, game model.Game, pdu core.GameEventPdu) ([]core.GameEventPdu, error) {
 	return func(evt core.GameCompleted) ([]core.GameEventPdu, error) {
 		events := []core.GameEventPdu{}
 
