@@ -1,6 +1,7 @@
 package core
 
 type CommandServicer interface {
+	OnQuery(gameId string)
 	OnCommand(cmd GameCommandPdu) error
 }
 

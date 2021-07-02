@@ -1,29 +1,26 @@
-package eventService
+package peerService
 
 import (
 	"fmt"
-	"github.com/MarcGrol/zeeslag/api"
 	"log"
 
 	"github.com/MarcGrol/zeeslag/core"
 	"github.com/MarcGrol/zeeslag/logic/repo"
 )
 
-type UserService struct {
+type PeerService struct {
 	repo            *repo.GameRepository
 	eventDispatcher *eventDispatcher
-	peerer          api.Peerer
 }
 
-func NewEventService(repo *repo.GameRepository, peerer api.Peerer) *UserService {
-	return &UserService{
+func NewPeerService(repo *repo.GameRepository) *PeerService {
+	return &PeerService{
 		repo:            repo,
 		eventDispatcher: newEventDispatcher(eventStateDispatching),
-		peerer:          peerer,
 	}
 }
 
-func (s *UserService) OnEvent(event core.GameEventPdu) error {
+func (s *PeerService) OnEvent(event core.GameEventPdu) error {
 	game, err := s.repo.GetGameOnId(event.GameId)
 	if err != nil {
 		log.Printf("Error fetching game for event %+v: %+v", event, err)

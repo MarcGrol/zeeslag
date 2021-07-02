@@ -109,6 +109,7 @@ const (
 	Idle GameStatus = iota
 	Created
 	InvitationPending
+	Invited
 	Rejected
 	Active
 	WaitforAssessment
@@ -124,6 +125,8 @@ func (s GameStatus) String() string {
 		return "status-created"
 	case InvitationPending:
 		return "status-pending"
+	case Invited:
+		return "status-invited"
 	case Rejected:
 		return "status-rejeected"
 	case Active:
@@ -147,6 +150,8 @@ func (g *Game) Apply(event core.GameEventPdu) {
 	switch event.EventType {
 	case core.EventType_GridPopulated:
 		g.ApplyGridPopulated(*event.Populated)
+	case core.EventType_InvitationforGameSent:
+		g.ApplyInvitationForGameSent(*event.InvitationSent)
 	case core.EventType_InvitedForGame:
 		g.ApplyInvitedForGame(*event.Invited)
 	case core.EventType_GameAccepted:
@@ -171,17 +176,24 @@ func (g *Game) ApplyGridPopulated(evt core.GridPopulated) {
 	g.Status = Created
 }
 
-func (g *Game) ApplyInvitedForGame(evt core.InvitedForGame) {
+func (g *Game) ApplyInvitationForGameSent(evt core.InvitationForGameSent) {
 	g.GameId = evt.GameId
 	g.Initiator = evt.Initiator
 	g.Invitee = evt.Invitee
 	g.Status = InvitationPending
 }
 
+func (g *Game) ApplyInvitedForGame(evt core.InvitedForGame) {
+	g.GameId = evt.GameId
+	g.Initiator = evt.Initiator
+	g.Invitee = evt.Invitee
+	g.Status = Invited
+}
+
 func (g *Game) ApplyGameAccepted(evt core.GameAccepted) {
 	g.GameId = evt.GameId
-	g.Status = Active
 	g.Starter = evt.Starter
+	g.Status = Active
 }
 
 func (g *Game) ApplyGameRejected(evt core.GameRejected) {

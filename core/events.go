@@ -9,6 +9,7 @@ type EventType int
 const (
 	EventType_Unknown = iota
 	EventType_GridPopulated
+	EventType_InvitationforGameSent
 	EventType_InvitedForGame
 	EventType_GameAccepted
 	EventType_GameRejected
@@ -22,6 +23,8 @@ func (et EventType) String() string {
 	switch et {
 	case EventType_GridPopulated:
 		return "populated"
+	case EventType_InvitationforGameSent:
+		return "invitation-sent"
 	case EventType_InvitedForGame:
 		return "invited"
 	case EventType_GameAccepted:
@@ -43,14 +46,15 @@ type GameEventPdu struct {
 	GameId    string
 	EventType EventType
 
-	Populated *GridPopulated
-	Invited   *InvitedForGame
-	Accepted  *GameAccepted
-	Rejected  *GameRejected
-	Fired     *SalvoFired
-	Assessed  *SalvoImpactAssessed
-	Quited    *GameQuited
-	Completed *GameCompleted
+	Populated      *GridPopulated
+	InvitationSent *InvitationForGameSent
+	Invited        *InvitedForGame
+	Accepted       *GameAccepted
+	Rejected       *GameRejected
+	Fired          *SalvoFired
+	Assessed       *SalvoImpactAssessed
+	Quited         *GameQuited
+	Completed      *GameCompleted
 }
 
 type GridPopulated struct {
@@ -67,6 +71,21 @@ func (e GridPopulated) ToPdu() GameEventPdu {
 		GameId:    e.GameId,
 		EventType: EventType_GridPopulated,
 		Populated: &e,
+	}
+}
+
+// events
+type InvitationForGameSent struct {
+	GameId    string
+	Initiator string
+	Invitee   string
+}
+
+func (e InvitationForGameSent) ToPdu() GameEventPdu {
+	return GameEventPdu{
+		GameId:         e.GameId,
+		EventType:      EventType_InvitationforGameSent,
+		InvitationSent: &e,
 	}
 }
 

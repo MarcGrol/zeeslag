@@ -1,4 +1,4 @@
-package eventService
+package peerService
 
 import (
 	"github.com/MarcGrol/zeeslag/core"
@@ -9,7 +9,7 @@ type eventDispatcher struct {
 	eventHandlers []eventGameState
 }
 
-type eventDispatcherCallback func(service *UserService, game model.Game, event core.GameEventPdu) ([]core.GameEventPdu, error)
+type eventDispatcherCallback func(service *PeerService, game model.Game, event core.GameEventPdu) ([]core.GameEventPdu, error)
 
 type eventGameState struct {
 	description string

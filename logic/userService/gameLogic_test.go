@@ -1,4 +1,4 @@
-package commandService
+package userService
 
 import (
 	"testing"
@@ -20,7 +20,7 @@ func TestInvite(t *testing.T) {
 	}
 
 	// when
-	game, err := when(preconditions, event.GameId, func(sut *CommandService) error {
+	game, err := when(preconditions, event.GameId, func(sut *UserService) error {
 		return sut.OnCommand(event.ToPdu())
 	})
 
@@ -46,7 +46,7 @@ func TestAccept(t *testing.T) {
 	}
 
 	// when
-	game, err := when(preconditions, command.GameId, func(sut *CommandService) error {
+	game, err := when(preconditions, command.GameId, func(sut *UserService) error {
 		return sut.OnCommand(command.ToPdu())
 	})
 
@@ -78,7 +78,7 @@ func TestFire(t *testing.T) {
 	}
 
 	// when
-	game, err := when(preconditions, command.GameId, func(sut *CommandService) error {
+	game, err := when(preconditions, command.GameId, func(sut *UserService) error {
 		return sut.OnCommand(command.ToPdu())
 	})
 
@@ -87,10 +87,9 @@ func TestFire(t *testing.T) {
 	assert.Equal(t, command.GameId, game.GameId)
 }
 
-func when(preconditions []core.GameEventPdu, gameId string, testFunc func(service *CommandService) error) (*model.Game, error) {
+func when(preconditions []core.GameEventPdu, gameId string, testFunc func(service *UserService) error) (*model.Game, error) {
 	repo := repo.NewGameRepository(infra.NewBasicEventStore(), infra.NewBasicPubsub())
-	peerer := infra.NewBasicPeer("")
-	sut := NewCommandService(repo, peerer)
+	sut := NewUserService(repo)
 
 	// force preconditions to be set
 	err := repo.StoreEvents(preconditions)

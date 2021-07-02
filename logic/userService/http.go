@@ -1,4 +1,4 @@
-package commandService
+package userService
 
 import (
 	"net/http"
@@ -6,14 +6,14 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func RegisterHTTPEndpoint(router *mux.Router, service *CommandService) {
-	subRouter := router.PathPrefix("/api/command").Subrouter()
-	subRouter.HandleFunc("/new", service.invite()).Methods("POST")
-	subRouter.HandleFunc("/{gameId}/salvo", service.fireSalvo()).Methods("PUT")
+func RegisterHTTPEndpoint(router *mux.Router, service *UserService) {
+	subRouter := router.PathPrefix("/api/user").Subrouter()
+	subRouter.HandleFunc("/new", service.inviteForGame()).Methods("POST")
 	subRouter.HandleFunc("/{gameId}", service.getGame()).Methods("GET")
+	subRouter.HandleFunc("/{gameId}/salvo", service.fireSalvo()).Methods("POST")
 }
 
-func (s *CommandService) invite() http.HandlerFunc {
+func (s *UserService) inviteForGame() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// TODO unpack request
 
@@ -24,7 +24,7 @@ func (s *CommandService) invite() http.HandlerFunc {
 	}
 }
 
-func (s *CommandService) fireSalvo() http.HandlerFunc {
+func (s *UserService) fireSalvo() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// TODO unpack request
 
@@ -35,7 +35,7 @@ func (s *CommandService) fireSalvo() http.HandlerFunc {
 	}
 }
 
-func (s *CommandService) getGame() http.HandlerFunc {
+func (s *UserService) getGame() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// TODO unpack request
 

@@ -1,4 +1,4 @@
-package eventService
+package peerService
 
 import (
 	"testing"
@@ -10,30 +10,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestPopulated(t *testing.T) {
+func TestInvited(t *testing.T) {
 	// given
 	preconditions := []core.GameEventPdu{}
-	cmd := core.GridPopulated{
-		GameId: "1",
-	}
 
-	// when
-	game, err := when(preconditions, cmd.GameId, func(sut *UserService) error {
-		return sut.OnEvent(cmd.ToPdu())
-	})
-
-	// then
-	assert.NoError(t, err)
-	assert.Equal(t, cmd.GameId, game.GameId)
-}
-
-func NoTestInvited(t *testing.T) {
-	// given
-	preconditions := []core.GameEventPdu{
-		core.GridPopulated{
-			GameId: "1",
-		}.ToPdu(),
-	}
 	event := core.InvitedForGame{
 		GameId:    "1",
 		Initiator: "me",
@@ -41,15 +21,13 @@ func NoTestInvited(t *testing.T) {
 	}
 
 	// when
-	game, err := when(preconditions, event.GameId, func(sut *UserService) error {
+	game, err := when(preconditions, event.GameId, func(sut *PeerService) error {
 		return sut.OnEvent(event.ToPdu())
 	})
 
 	// then
 	assert.NoError(t, err)
 	assert.Equal(t, event.GameId, game.GameId)
-	assert.Equal(t, event.Initiator, game.Initiator)
-	assert.Equal(t, event.Invitee, game.Invitee)
 }
 
 func TestAccepted(t *testing.T) {
@@ -97,10 +75,9 @@ func TestQuited(t *testing.T) {
 
 }
 
-func when(preconditions []core.GameEventPdu, gameId string, testFunc func(service *UserService) error) (*model.Game, error) {
+func when(preconditions []core.GameEventPdu, gameId string, testFunc func(service *PeerService) error) (*model.Game, error) {
 	repo := repo.NewGameRepository(infra.NewBasicEventStore(), infra.NewBasicPubsub())
-	peerer := infra.NewBasicPeer("")
-	sut := NewEventService(repo, peerer)
+	sut := NewPeerService(repo)
 
 	// force preconditions to be set
 	err := repo.StoreEvents(preconditions)

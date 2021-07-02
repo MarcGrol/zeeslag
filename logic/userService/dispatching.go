@@ -1,4 +1,4 @@
-package commandService
+package userService
 
 import (
 	"github.com/MarcGrol/zeeslag/core"
@@ -9,7 +9,7 @@ type commandDispatcher struct {
 	commandHandlers []commandGameState
 }
 
-type commandDispatcherCallback func(service *CommandService, game model.Game, command core.GameCommandPdu) ([]core.GameEventPdu, error)
+type commandDispatcherCallback func(service *UserService, game model.Game, command core.GameCommandPdu) ([]core.GameEventPdu, error)
 
 type commandGameState struct {
 	description string

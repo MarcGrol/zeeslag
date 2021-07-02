@@ -2,15 +2,16 @@ package main
 
 import (
 	"flag"
+	"github.com/MarcGrol/zeeslag/logic/peerService"
 	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
 
 	"github.com/MarcGrol/zeeslag/infra"
-	"github.com/MarcGrol/zeeslag/logic/commandService"
 	"github.com/MarcGrol/zeeslag/logic/eventService"
 	"github.com/MarcGrol/zeeslag/logic/repo"
+	"github.com/MarcGrol/zeeslag/logic/userService"
 )
 
 var (
@@ -36,7 +37,8 @@ func main() {
 	router := mux.NewRouter()
 
 	eventService.RegisterHTTPEndpoint(router, eventService.NewEventService(repo, peer))
-	commandService.RegisterHTTPEndpoint(router, commandService.NewCommandService(repo, peer))
+	peerService.RegisterHTTPEndpoint(router, peerService.NewPeerService(repo))
+	userService.RegisterHTTPEndpoint(router, userService.NewUserService(repo))
 
 	// Start listening for http requests in foreground
 	log.Fatal(http.ListenAndServe(localPort, router))

@@ -1,29 +1,31 @@
-package commandService
+package userService
 
 import (
 	"fmt"
-	"github.com/MarcGrol/zeeslag/api"
+	"github.com/MarcGrol/zeeslag/model"
 	"log"
 
 	"github.com/MarcGrol/zeeslag/core"
 	"github.com/MarcGrol/zeeslag/logic/repo"
 )
 
-type CommandService struct {
+type UserService struct {
 	repo              *repo.GameRepository
 	commandDispatcher *commandDispatcher
-	peerer            api.Peerer
 }
 
-func NewCommandService(repo *repo.GameRepository, peerer api.Peerer) *CommandService {
-	return &CommandService{
+func NewUserService(repo *repo.GameRepository) *UserService {
+	return &UserService{
 		repo:              repo,
 		commandDispatcher: newCommandDispatcher(commandStateDisppatching),
-		peerer:            peerer,
 	}
 }
 
-func (s *CommandService) OnCommand(command core.GameCommandPdu) error {
+func (s *UserService) OnQuery(gameId string) (*model.Game, error) {
+	return s.repo.GetGameOnId(gameId)
+}
+
+func (s *UserService) OnCommand(command core.GameCommandPdu) error {
 
 	game, err := s.repo.GetGameOnId(command.GameId)
 	if err != nil {
