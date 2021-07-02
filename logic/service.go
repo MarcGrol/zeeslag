@@ -32,7 +32,7 @@ func (s *GameLogicService) OnCommand(command core.GameCommandPdu) error {
 	log.Printf("Got command %s (%+v) for game: %s 	(%+v)", command.CommandType, command, game.Status, game)
 
 	// Lookup if this state-command can be handled
-	dispatchFunc, expectedNextStatus, found := s.commandDispatcher.resolveEvent(game.Status, command.CommandType)
+	dispatchFunc, expectedNextStatus, found := s.commandDispatcher.resolve(game.Status, command.CommandType)
 	if !found {
 		return fmt.Errorf("Command %+v could not be resolved for state %+v", command.CommandType, game.Status)
 	}
@@ -73,7 +73,7 @@ func (s *GameLogicService) OnEvent(event core.GameEventPdu) error {
 	log.Printf("Got event %s (%+v) for game: %s (%+v)", event.EventType, event, game.Status, game)
 
 	// Lookup if this state-event can be handled
-	dispatchFunc, expectedNextStatus, found := s.eventDispatcher.resolveCommand(game.Status, event.EventType)
+	dispatchFunc, expectedNextStatus, found := s.eventDispatcher.resolve(game.Status, event.EventType)
 	if !found {
 		return fmt.Errorf("Event %+v could not be resolved for state %s", event.EventType, game.Status)
 	}

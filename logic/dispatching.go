@@ -24,7 +24,7 @@ func newCommandDispatcher(gameStates []commandGameState) *commandDispatcher {
 	}
 }
 
-func (et commandDispatcher) resolveEvent(gameState GameStatus, commandType core.CommandType) (commandDispatcherCallback, GameStatus, bool) {
+func (et commandDispatcher) resolve(gameState GameStatus, commandType core.CommandType) (commandDispatcherCallback, GameStatus, bool) {
 	for _, h := range et.commandHandlers {
 		if h.gameState == gameState && h.commandType == commandType {
 			return h.callback, h.nextState, true
@@ -53,7 +53,7 @@ func newEventDispatcher(gameStates []eventGameState) *eventDispatcher {
 	}
 }
 
-func (et eventDispatcher) resolveCommand(gameState GameStatus, eventType core.EventType) (eventDispatcherCallback, GameStatus, bool) {
+func (et eventDispatcher) resolve(gameState GameStatus, eventType core.EventType) (eventDispatcherCallback, GameStatus, bool) {
 	for _, h := range et.eventHandlers {
 		if h.gameState == gameState && h.eventType == eventType {
 			return h.callback, h.nextState, true
