@@ -84,6 +84,7 @@ func (c RejectGame) ToPdu() GameCommandPdu {
 
 type FireSalvo struct {
 	GameId  string
+	SalvoId string
 	FiredBy string
 	Targets []Coordinate
 }

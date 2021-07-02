@@ -9,14 +9,14 @@ import (
 )
 
 type EventService struct {
-	repo              *repo.GameRepository
-	eventDispatcher   *eventDispatcher
+	repo            *repo.GameRepository
+	eventDispatcher *eventDispatcher
 }
 
 func NewEventService(repo *repo.GameRepository) *EventService {
 	return &EventService{
-		repo:              repo,
-		eventDispatcher:   newEventDispatcher(eventStateDispatching),
+		repo:            repo,
+		eventDispatcher: newEventDispatcher(eventStateDispatching),
 	}
 }
 

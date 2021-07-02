@@ -10,7 +10,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-
 func TestInvite(t *testing.T) {
 	// given
 	preconditions := []core.GameEventPdu{}
@@ -47,7 +46,7 @@ func TestAccept(t *testing.T) {
 	}
 
 	// when
-	game, err := when(preconditions, command.GameId, func(sut  *CommandService) error {
+	game, err := when(preconditions, command.GameId, func(sut *CommandService) error {
 		return sut.OnCommand(command.ToPdu())
 	})
 
@@ -79,7 +78,7 @@ func TestFire(t *testing.T) {
 	}
 
 	// when
-	game, err := when(preconditions, command.GameId, func(sut  *CommandService) error {
+	game, err := when(preconditions, command.GameId, func(sut *CommandService) error {
 		return sut.OnCommand(command.ToPdu())
 	})
 

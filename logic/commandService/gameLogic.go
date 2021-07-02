@@ -151,4 +151,3 @@ func quitGame(s *CommandService, game model.Game, pdu core.GameCommandPdu) ([]co
 		return events, nil
 	}(*pdu.Quit)
 }
-
